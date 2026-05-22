@@ -1,0 +1,186 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+/* ── CSS Variables ─────────────────────────────── */
+:root {
+  --cs-primary: #2e7d32;
+  --cs-primary-dark: #1b5e20;
+  --cs-primary-light: #4caf50;
+  --cs-accent: #81c784;
+  --cs-sidebar-bg: #1b5e20;
+  --cs-sidebar-width: 260px;
+  --cs-navbar-height: 60px;
+}
+
+/* ── Sidebar ───────────────────────────────────── */
+.sidebar {
+  width: var(--cs-sidebar-width);
+  min-height: 100vh;
+  background: var(--cs-sidebar-bg);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.sidebar-brand {
+  height: var(--cs-navbar-height);
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-brand span {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-nav {
+  padding: 1rem 0;
+}
+
+.sidebar-label {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0.5rem 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1.25rem;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border-left-color: var(--cs-accent);
+}
+
+.sidebar-link i {
+  font-size: 1.1rem;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* ── Main Content ──────────────────────────────── */
+.main-wrapper {
+  margin-left: var(--cs-sidebar-width);
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.main-navbar {
+  height: var(--cs-navbar-height);
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 900;
+}
+
+.main-content {
+  padding: 1.5rem;
+}
+
+/* ── Cards ─────────────────────────────────────── */
+.stat-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.25rem;
+  border: 1px solid #e8e8e8;
+  transition: box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+/* ── Login ─────────────────────────────────────── */
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    var(--cs-primary-dark) 0%,
+    var(--cs-primary-light) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Buttons ───────────────────────────────────── */
+.btn-primary {
+  background-color: var(--cs-primary) !important;
+  border-color: var(--cs-primary) !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--cs-primary-dark) !important;
+  border-color: var(--cs-primary-dark) !important;
+}
+
+/* ── Table ─────────────────────────────────────── */
+.table th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+  font-weight: 600;
+  border-top: none;
+}
+
+/* ── Badge ─────────────────────────────────────── */
+.badge-status-lunas {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.badge-status-belum {
+  background: #fff3e0;
+  color: #e65100;
+}
+.badge-status-kurang {
+  background: #fce4ec;
+  color: #c62828;
+}
+.badge-status-lebih {
+  background: #e3f2fd;
+  color: #1565c0;
+}
