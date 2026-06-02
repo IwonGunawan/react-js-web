@@ -71,8 +71,8 @@ export default function LoginPage() {
                 className="form-control"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@example.com"
                 disabled={isLoading}
+                autoFocus
                 required
               />
             </div>
@@ -89,7 +89,6 @@ export default function LoginPage() {
                 className="form-control"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
                 disabled={isLoading}
                 required
               />

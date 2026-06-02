@@ -52,7 +52,7 @@ export function useCustomer(initialQuery: InitialQuery = {}) {
     error,
     totalPages, 
     totalData, 
-    initialQuery, 
+    query, 
     updateQuery,
     setPage, 
     refetch: fetchData,

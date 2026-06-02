@@ -2,8 +2,8 @@ export interface User {
   id: number;
   name: string;
   email: string;
-  status: '0' | '1'; // active inactive
-  level: '0' | '1'; // admin petugas
+  status: '0' | '1'; // 0=active, 1=inActive
+  level: '0' | '1'; // 0=admin, 1=petugas
 }
 
 export interface Customer {

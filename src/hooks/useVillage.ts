@@ -3,7 +3,7 @@ import type { Village } from "../types";
 import { villageService } from "../services/village.service";
 
 export function useVillage() {
-  const [village, setVillage] = useState<Village[]>([]);
+  const [villages, setVillages] = useState<Village[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null)
 
@@ -14,9 +14,9 @@ export function useVillage() {
 
       try {
         const data = await villageService.getAll()
-        setVillage(data)
+        setVillages(data)
       } catch {
-        setError('Failed load village data');
+        setError('Failed load villages data');
       } finally {
         setIsLoading(false);
       }
@@ -26,7 +26,7 @@ export function useVillage() {
   }, []) // [] => load sekali saat di mount
 
   return {
-    village,
+    villages,
     isLoading, 
     error
   }
