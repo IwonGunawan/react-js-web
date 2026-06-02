@@ -3,6 +3,7 @@ import LoginPage from "../pages/auth/LoginPage";
 import ProtectedRoute from "../components/shared/ProtectedRoute";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import MainLayout from "../components/shared/MainLayout";
+import CustomerPage from "../pages/customers/CustomerPage";
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ export const router = createBrowserRouter([
           {
             path: "/dashboard",
             element: <DashboardPage />,
+          },
+          {
+            path: "/customers",
+            element: <CustomerPage />,
           },
         ],
       },
