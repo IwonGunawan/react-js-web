@@ -1,13 +1,16 @@
+import { useState } from "react";
 import EmptyState from "../../components/ui/EmptyState";
 import { Spinner } from "../../components/ui/Spinner";
 import { useDashboard } from "../../hooks/useDashboard";
 import type { IncomeChart } from "../../services/dashboard.service";
 import { useAuthStore } from "../../stores/auth.store";
 import { formatRupiah, MONTH_NAMES } from "../../utils";
+import ArrearsModal from "./ArrearsModal";
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
   const { summary, isLoading, error } = useDashboard();
+  const [showArrearsModal, setShowArrearsModal] = useState(false);
 
   if (isLoading) return <Spinner />;
   if (error) return <div className="alert alert-danger">{error}</div>;
@@ -49,6 +52,9 @@ export default function DashboardPage() {
         },
       ]
     : [];
+
+  const previewArrears = summary?.topArrears.slice(0, 5) ?? [];
+  const allArrears = summary?.topArrears ?? [];
 
   return (
     <div>
@@ -100,32 +106,77 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Top Appers */}
+        {/* Top Arrears */}
         <div className="col-xl-4">
-          <div className="stat-card h-100">
-            <p className="fw-semibold mb-3">Tunggakan Terbesar</p>
-            {summary && summary.topArrears.length > 0 ? (
-              <div className="d-flex flex-column gap-2">
-                {summary.topArrears.slice(0, 5).map((a) => (
-                  <div
-                    key={a.customerId}
-                    className="d-flex justify-content-between align-items-center"
-                  >
-                    <div>
-                      <p className="mb-0 small fw-semibold">{a.name}</p>
-                      <p
-                        className="mb-0 text-muted"
-                        style={{ fontSize: "0.75rem" }}
+          <div className="stat-card h-100 d-flex flex-column">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <p className="fw-semibold mb-0">Tunggakan Terbesar</p>
+              {allArrears.length > 0 && (
+                <span
+                  className="small text-primary"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setShowArrearsModal(true)}
+                >
+                  Lihat semua
+                  <i className="bi bi-arrow-right ms-1" />
+                </span>
+              )}
+            </div>
+
+            {previewArrears.length > 0 ? (
+              <>
+                <div className="d-flex flex-column gap-3 flex-grow-1">
+                  {previewArrears.map((a, index) => (
+                    <div
+                      key={a.customerId}
+                      className="d-flex justify-content-between align-items-center"
+                    >
+                      {/* Nomor ranking */}
+                      <div className="d-flex align-items-center gap-2">
+                        <span
+                          className="d-flex align-items-center justify-content-center rounded-circle fw-bold"
+                          style={{
+                            width: 22,
+                            height: 22,
+                            fontSize: "0.7rem",
+                            background: index === 0 ? "#fce4ec" : "#f5f5f5",
+                            color: index === 0 ? "#c62828" : "#666",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {index + 1}
+                        </span>
+                        <div>
+                          <p className="mb-0 small fw-semibold">{a.name}</p>
+                          <p
+                            className="mb-0 text-muted"
+                            style={{ fontSize: "0.72rem" }}
+                          >
+                            {a.code}
+                          </p>
+                        </div>
+                      </div>
+                      <span
+                        className="badge badge-status-kurang ms-2"
+                        style={{ whiteSpace: "nowrap" }}
                       >
-                        {a.code}
-                      </p>
+                        {formatRupiah(a.arrearsAmount)}
+                      </span>
                     </div>
-                    <span className="badge badge-status-kurang">
-                      {formatRupiah(a.arrearsAmount)}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+
+                {/* Footer — trigger modal */}
+                {allArrears.length > 5 && (
+                  <button
+                    className="btn btn-light btn-sm w-100 mt-3"
+                    onClick={() => setShowArrearsModal(true)}
+                  >
+                    <i className="bi bi-chevron-down me-1" />
+                    Lihat {allArrears.length - 5} lainnya
+                  </button>
+                )}
+              </>
             ) : (
               <EmptyState
                 message="Tidak ada tunggakan"
@@ -135,6 +186,14 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Arrears Modal */}
+      {showArrearsModal && (
+        <ArrearsModal
+          data={allArrears}
+          onClose={() => setShowArrearsModal(false)}
+        />
+      )}
     </div>
   );
 }
