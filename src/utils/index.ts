@@ -1,4 +1,4 @@
-export const formatRupiah = (n: number) => 'Rp.' + n.toLocaleString('id-ID');
+export const formatRupiah = (n: number) => 'Rp' + n.toLocaleString('id-ID');
 
 export const MONTH_NAMES = [
   '', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
@@ -24,3 +24,20 @@ export const PREFIXES = [
     label: 'Ma'
   }
 ]
+
+export const STATUS_MAP: Record<string, { label: string; className: string }> = {
+  '0': { label: 'Belum Bayar',  className: 'badge-status-belum' },
+  '1': { label: 'Lunas',        className: 'badge-status-lunas' },
+  '2': { label: 'Kurang Bayar', className: 'badge-status-kurang' },
+  '3': { label: 'Lebih Bayar',  className: 'badge-status-lebih' },
+};
+
+
+export const formatNumberInput = (value: string) => {
+  const numeric = value.replace(/\D/g, "");
+  return numeric ? Number(numeric).toLocaleString("id-ID") : "";
+};
+
+export const parseNumberInput = (value: string) => {
+  return value.replace(/\./g, "");
+};

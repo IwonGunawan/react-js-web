@@ -71,9 +71,11 @@ export interface ListBill {
 export interface PaginatedResponse<T> {
   data: T[];
   meta: {
-    total:       number; // total data
-    page:        number; // current page
-    limit:       number; // limit per page
-    totalPages: number; // total page
+    totalData:        number; // total data
+    totalPages:       number; // total page
+    page:             number; // current page
+    limit:            number; // limit per page
+    checkedMonth?:    number;
+    checkedYear?:     number;
   };
 }

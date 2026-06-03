@@ -4,6 +4,8 @@ import ProtectedRoute from "../components/shared/ProtectedRoute";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import MainLayout from "../components/shared/MainLayout";
 import CustomerPage from "../pages/customers/CustomerPage";
+import WaterUsagePage from "../pages/water-usage/WaterUsagePage";
+import PaymentsPage from "../pages/payments/PaymentPage";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +26,14 @@ export const router = createBrowserRouter([
           {
             path: "/customers",
             element: <CustomerPage />,
+          },
+          {
+            path: "/water-usage",
+            element: <WaterUsagePage />,
+          },
+          {
+            path: "/payments",
+            element: <PaymentsPage />,
           },
         ],
       },

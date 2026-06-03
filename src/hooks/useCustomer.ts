@@ -24,7 +24,7 @@ export function useCustomer(initialQuery: InitialQuery = {}) {
     try {
       const rest = await customerService.getAll(query);
       setCustomers(rest.data);
-      setTotalData(rest.meta.total);
+      setTotalData(rest.meta.totalData);
       setTotalPages(rest.meta.totalPages);
     } catch (error) {
       console.log({error})
