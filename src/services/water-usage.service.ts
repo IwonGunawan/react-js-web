@@ -20,7 +20,7 @@ export interface WaterUsageHistory {
   rate?:    { pricePerM3: number };
 }
 
-interface WaterUsageQuery {
+export interface WaterUsageQuery {
   villageId?: number;
   search?: string;
   page?: number;
