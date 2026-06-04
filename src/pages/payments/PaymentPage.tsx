@@ -113,19 +113,21 @@ export default function PaymentsPage() {
                         )}
                       </td>
                       <td className="text-end">
+                        {c.finalTotal > 0 && (
+                          <button
+                            className="btn btn-sm btn-primary me-1"
+                            onClick={() => setPayModal(c)}
+                          >
+                            <i className="bi bi-cash-coin me-1" />
+                            Bayar
+                          </button>
+                        )}
                         <button
                           className="btn btn-sm btn-outline-secondary me-1"
                           title="History pembayaran"
                           onClick={() => setHistoryModal(c)}
                         >
                           <i className="bi bi-receipt" />
-                        </button>
-                        <button
-                          className="btn btn-sm btn-primary"
-                          onClick={() => setPayModal(c)}
-                        >
-                          <i className="bi bi-cash-coin me-1" />
-                          Bayar
                         </button>
                       </td>
                     </tr>

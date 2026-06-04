@@ -6,9 +6,10 @@ import {
 import { type WaterUsageCustomer } from "../../services/water-usage.service";
 import { Spinner } from "../../components/ui/Spinner";
 import EmptyState from "../../components/ui/EmptyState";
+import { formatRupiah, STATUS_MAP } from "../../utils";
+import Pagination from "../../components/ui/Pagination";
 
-const formatRupiah = (n: number) => "Rp " + n.toLocaleString("id-ID");
-
+const LIMIT = 10;
 interface Props {
   customer: WaterUsageCustomer;
   onClose: () => void;
@@ -17,13 +18,20 @@ interface Props {
 export default function PaymentHistoryModal({ customer, onClose }: Props) {
   const [history, setHistory] = useState<PaymentHistory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalData, setTotalData] = useState(0);
 
   useEffect(() => {
     paymentService
-      .getByCustomer(customer.customerId)
-      .then((res) => setHistory(res.data))
+      .getByCustomer(customer.customerId, { page, limit: LIMIT })
+      .then((res) => {
+        setHistory(res.data);
+        setTotalPages(res.meta.totalPages);
+        setTotalData(res.meta.totalData);
+      })
       .finally(() => setIsLoading(false));
-  }, [customer.customerId]);
+  }, [customer.customerId, page]);
 
   return (
     <div
@@ -40,6 +48,11 @@ export default function PaymentHistoryModal({ customer, onClose }: Props) {
               <h6 className="modal-title fw-bold mb-0">History Pembayaran</h6>
               <p className="text-muted small mb-0">
                 {customer.prefix} {customer.name} — {customer.code}
+                {totalData > 0 && (
+                  <span className="ms-1 text-muted">
+                    ({totalData} transaksi)
+                  </span>
+                )}
               </p>
             </div>
             <button className="btn-close" onClick={onClose} />
@@ -61,8 +74,8 @@ export default function PaymentHistoryModal({ customer, onClose }: Props) {
                   <tr>
                     <th className="ps-3">Tanggal</th>
                     <th className="text-end">Tagihan</th>
-                    <th className="text-end pe-3">Tunai</th>
-                    <th className="text-end">Ket</th>
+                    <th className="text-end">Tunai</th>
+                    <th className="text-end">Sisa</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -91,12 +104,15 @@ export default function PaymentHistoryModal({ customer, onClose }: Props) {
                       <td className="text-end small fw-semibold">
                         {formatRupiah(h.total)}
                       </td>
-                      <td className="text-end pe-3 small">
-                        {formatRupiah(h.cash)}
-                      </td>
-                      <td className="text-end small">
-                        <p className="badge badge-status-kurang">
-                          kurang bayar
+                      <td className="text-end small">{formatRupiah(h.cash)}</td>
+                      <td className="text-center small">
+                        {h.total - h.cash != 0
+                          ? formatRupiah(h.total - h.cash)
+                          : ""}
+                        <p
+                          className={`badge ${STATUS_MAP[String(h.status)].className} d-block mt-1`}
+                        >
+                          {STATUS_MAP[String(h.status)].label}
                         </p>
                       </td>
                     </tr>
@@ -106,7 +122,13 @@ export default function PaymentHistoryModal({ customer, onClose }: Props) {
             )}
           </div>
 
-          <div className="modal-footer">
+          <div className="modal-footer justify-content-between">
+            {/* Pagination di kiri, tombol tutup di kanan */}
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              onChange={(p) => setPage(p)}
+            />
             <button className="btn btn-sm btn-light" onClick={onClose}>
               Tutup
             </button>

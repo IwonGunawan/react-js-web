@@ -170,6 +170,15 @@ export default function WaterUsagePage() {
                         )}
                       </td>
                       <td className="text-end">
+                        {c.isChecked === 0 && (
+                          <button
+                            className="btn btn-sm btn-primary me-1"
+                            onClick={() => setInputModal(c)}
+                          >
+                            <i className="bi bi-pencil-square me-1" />
+                            Input
+                          </button>
+                        )}
                         <button
                           className="btn btn-sm btn-outline-secondary me-1"
                           title="History pemakaian"
@@ -177,15 +186,6 @@ export default function WaterUsagePage() {
                         >
                           <i className="bi bi-clock-history" />
                         </button>
-                        {c.isChecked === 0 && (
-                          <button
-                            className="btn btn-sm btn-primary"
-                            onClick={() => setInputModal(c)}
-                          >
-                            <i className="bi bi-pencil-square me-1" />
-                            Input
-                          </button>
-                        )}
                       </td>
                     </tr>
                   ))}

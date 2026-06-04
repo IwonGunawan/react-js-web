@@ -32,17 +32,12 @@ interface WaterUsagePrice {
 
 export interface PaymentHistory {
   id:         number;
+  customerId: number;
   total:      number;
   cash:       number;
+  status:     number; // 1: lunas, 2:kurang-bayar, 3:lebih-bayar
   logUuid:    string;
   createdAt:  string;
-  paymentDetails: PaymentDetail[];
-}
-
-interface PaymentDetail {
-  id: number;
-  paymentId: number;
-  waterUsageId: number;
 }
 
 export const paymentService = {
