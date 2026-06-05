@@ -106,8 +106,8 @@ export default function PaymentHistoryModal({ customer, onClose }: Props) {
                       </td>
                       <td className="text-end small">{formatRupiah(h.cash)}</td>
                       <td className="text-center small">
-                        {h.total - h.cash != 0
-                          ? formatRupiah(h.total - h.cash)
+                        {[2, 3].includes(h.status)
+                          ? formatRupiah(Math.abs(h.total - h.cash))
                           : ""}
                         <p
                           className={`badge ${STATUS_MAP[String(h.status)].className} d-block mt-1`}

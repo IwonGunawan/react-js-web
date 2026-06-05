@@ -1,0 +1,229 @@
+import { useState, useEffect } from "react";
+import { rateService, type Rate } from "../../services/rate.service";
+import EmptyState from "../../components/ui/EmptyState";
+import { Spinner } from "../../components/ui/Spinner";
+
+const formatRupiah = (n: number) => "Rp " + n.toLocaleString("id-ID");
+
+export default function RatesPage() {
+  const [rates, setRates] = useState<Rate[]>([]);
+  const [current, setCurrent] = useState<Rate | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [price, setPrice] = useState("");
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchRates = async () => {
+    setIsLoading(true);
+    try {
+      const [all, cur] = await Promise.all([
+        rateService.getAll(),
+        rateService.getCurrent(),
+      ]);
+      setRates(all);
+      setCurrent(cur);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRates();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsSaving(true);
+    try {
+      await rateService.create({
+        price_per_m3: Number(price),
+        effective_from: date,
+      });
+      setShowForm(false);
+      setPrice("");
+      fetchRates();
+    } catch (err: any) {
+      setError(err.response?.data?.message ?? "Gagal menyimpan tarif");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h5 className="fw-bold mb-0">Manajemen Tarif</h5>
+          <p className="text-muted small mb-0">History perubahan tarif air</p>
+        </div>
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={() => setShowForm(!showForm)}
+        >
+          <i className="bi bi-plus-lg me-1" />
+          Set Tarif Baru
+        </button>
+      </div>
+
+      {/* Current rate highlight */}
+      {current && (
+        <div
+          className="stat-card mb-4 border-0"
+          style={{
+            background:
+              "linear-gradient(135deg, var(--cs-primary) 0%, var(--cs-primary-light) 100%)",
+          }}
+        >
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <p className="text-white opacity-75 small mb-1">
+                Tarif Berlaku Sekarang
+              </p>
+              <h3 className="fw-bold text-white mb-0">
+                {formatRupiah(Number(current.pricePerM3))}
+                <span className="fs-6 fw-normal ms-1">/m³</span>
+              </h3>
+            </div>
+            <div
+              className="d-flex align-items-center justify-content-center rounded-circle"
+              style={{
+                width: 56,
+                height: 56,
+                background: "rgba(255,255,255,0.15)",
+              }}
+            >
+              <i className="bi bi-droplet-fill text-white fs-4" />
+            </div>
+          </div>
+          <p className="text-white opacity-75 small mb-0 mt-2">
+            <i className="bi bi-calendar me-1" />
+            Berlaku sejak{" "}
+            {new Date(current.effectiveFrom).toLocaleDateString("id-ID", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            })}
+          </p>
+        </div>
+      )}
+
+      {/* Form set tarif baru */}
+      {showForm && (
+        <div className="stat-card mb-4">
+          <p className="fw-semibold mb-3">Set Tarif Baru</p>
+          {error && (
+            <div className="alert alert-danger py-2 small">{error}</div>
+          )}
+          <form onSubmit={handleSubmit}>
+            <div className="row g-3">
+              <div className="col-md-5">
+                <label className="form-label small fw-semibold">
+                  Harga per m³ (Rp)
+                </label>
+                <input
+                  type="number"
+                  className="form-control form-control-sm"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="1000"
+                  min={1}
+                  required
+                />
+              </div>
+              <div className="col-md-5">
+                <label className="form-label small fw-semibold">
+                  Berlaku Mulai
+                </label>
+                <input
+                  type="date"
+                  className="form-control form-control-sm"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="col-md-2 d-flex align-items-end gap-2">
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-sm w-100"
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <span className="spinner-border spinner-border-sm" />
+                  ) : (
+                    "Simpan"
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-light btn-sm"
+                  onClick={() => setShowForm(false)}
+                >
+                  <i className="bi bi-x" />
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* History */}
+      <div className="stat-card">
+        <p className="fw-semibold mb-3">History Perubahan Tarif</p>
+        {isLoading ? (
+          <Spinner />
+        ) : rates.length === 0 ? (
+          <EmptyState message="Belum ada tarif tersimpan" icons="bi-tag" />
+        ) : (
+          <div className="table-responsive">
+            <table className="table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Harga per m³</th>
+                  <th>Berlaku Mulai</th>
+                  <th>Ditambahkan</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rates.map((r) => (
+                  <tr key={r.id}>
+                    <td className="fw-semibold">
+                      {formatRupiah(Number(r.pricePerM3))}
+                    </td>
+                    <td className="small">
+                      {new Date(r.effectiveFrom).toLocaleDateString("id-ID", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </td>
+                    <td className="small text-muted">
+                      {new Date(r.createdAt).toLocaleDateString("id-ID", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </td>
+                    <td>
+                      {current?.id === r.id ? (
+                        <span className="badge badge-status-lunas">Aktif</span>
+                      ) : (
+                        <span className="badge bg-light text-muted">
+                          Tidak aktif
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
