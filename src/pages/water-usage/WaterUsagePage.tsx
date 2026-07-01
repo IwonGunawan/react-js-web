@@ -78,10 +78,10 @@ export default function WaterUsagePage() {
           <select
             className="form-select form-select-sm"
             style={{ width: 160 }}
-            value={query.village_id ?? ""}
+            value={query.villageId ?? ""}
             onChange={(e) =>
               updateQuery({
-                village_id: e.target.value ? Number(e.target.value) : undefined,
+                villageId: e.target.value ? Number(e.target.value) : undefined,
               })
             }
           >
@@ -96,13 +96,13 @@ export default function WaterUsagePage() {
           <select
             className="form-select form-select-sm"
             style={{ width: 150 }}
-            value={`${query.sort_by ?? "name"}-${query.sort_order ?? "ASC"}`}
+            value={`${query.sortBy ?? "name"}-${query.sortOrder ?? "ASC"}`}
             onChange={(e) => {
-              const [sort_by, sort_order] = e.target.value.split("-") as [
+              const [sortBy, sortOrder] = e.target.value.split("-") as [
                 "name" | "id",
                 "ASC" | "DESC",
               ];
-              updateQuery({ sort_by, sort_order });
+              updateQuery({ sortBy, sortOrder });
             }}
           >
             <option value="name-ASC">Nama A-Z</option>

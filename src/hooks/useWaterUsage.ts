@@ -2,11 +2,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { waterUsageService, type WaterUsageCustomer, type WaterUsageHistory } from '../services/water-usage.service';
 
 interface Query {
-  village_id?:  number;
+  villageId?:  number;
   search?:      string;
   page?:        number;
-  sort_by?:     'name' | 'id';
-  sort_order?:  'ASC' | 'DESC';
+  limit?:       number;
+  sortBy?:     'name' | 'id';
+  sortOrder?:  'ASC' | 'DESC';
 }
 
 export function useWaterUsage(initialQuery: Query = {}) {
