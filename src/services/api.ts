@@ -1,5 +1,22 @@
 import axios from "axios";
 
+/**
+ * Tambahan flag di request config. Dipakai untuk menandai
+ * endpoint yang 401-nya bukan sesi expired — jadi response
+ * interceptor tidak auto-redirect ke /login.
+ *
+ * Contoh: /auth/login mengirim 401 ketika kredensial salah;
+ * itu bagian dari flow login, bukan sesi yang mati.
+ */
+declare module "axios" {
+  export interface AxiosRequestConfig {
+    skipAuthRedirect?: boolean;
+  }
+  export interface InternalAxiosRequestConfig {
+    skipAuthRedirect?: boolean;
+  }
+}
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {'Content-Type': 'application/json'}
@@ -19,9 +36,11 @@ api.interceptors.request.use((config) => {
 })
 
 api.interceptors.response.use(
-  (response) => response, 
+  (response) => response,
   (error) => {
-    if(error.response?.status == 401) {
+    const skipRedirect = error.config?.skipAuthRedirect === true;
+
+    if(error.response?.status == 401 && !skipRedirect) {
       localStorage.removeItem('token');
       window.location.href = '/login';
     }

@@ -1,3 +1,41 @@
+/**
+ * Mengambil pesan error yang ramah pengguna dari error Axios / unknown.
+ *
+ * Backend NestJS mengirim error dengan bentuk:
+ * - UnauthorizedException('Password salah')    -> response.data.message: string
+ * - ValidationPipe (class-validator) gagal      -> response.data.message: string[]
+ * - HttpException(message)                      -> response.data.message: string
+ * - axios network error / tidak ada response    -> undefined
+ *
+ * Helper ini menormalkan semuanya jadi string tunggal.
+ */
+export function getApiErrorMessage(
+  err: unknown,
+  fallback = "Terjadi kesalahan. Silakan coba lagi.",
+): string {
+  if (!err || typeof err !== "object") return fallback;
+
+  const anyErr = err as {
+    response?: { data?: { message?: unknown } };
+    message?: string;
+  };
+
+  const raw = anyErr.response?.data?.message;
+
+  if (Array.isArray(raw)) {
+    const first = raw.find((m) => typeof m === "string" && m.trim().length > 0);
+    if (first) return first;
+  } else if (typeof raw === "string" && raw.trim().length > 0) {
+    return raw;
+  }
+
+  if (typeof anyErr.message === "string" && anyErr.message.trim().length > 0) {
+    return anyErr.message;
+  }
+
+  return fallback;
+}
+
 export const formatRupiah = (n: number) => 'Rp' + n.toLocaleString('id-ID');
 
 export const MONTH_NAMES = [
@@ -8,19 +46,19 @@ export const MONTH_NAMES = [
 
 export const PREFIXES = [
   {
-    id: 1, 
+    id: 1,
     label: 'Bpk'
   },
   {
-    id: 2, 
+    id: 2,
     label: 'Ibu',
-  }, 
+  },
   {
-    id: 3, 
+    id: 3,
     label: 'AKi'
   },
   {
-    id: 4, 
+    id: 4,
     label: 'Ma'
   }
 ]

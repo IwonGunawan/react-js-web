@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { authService } from "../../services/auth.service";
 import { useAuthStore } from "../../stores/auth.store";
 import { useNavigate } from "react-router-dom";
+import { getApiErrorMessage } from "../../utils";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -14,6 +15,14 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Pre-check supaya pesan error konsisten (tidak bergantung
+    // pada tooltip bawaan browser untuk field required).
+    if (!email.trim() || !password) {
+      setError("Username & Password wajib diisi");
+      return;
+    }
+
     setError(null);
     setIsLoading(true);
 
@@ -21,12 +30,8 @@ export default function LoginPage() {
       const { access_token, user } = await authService.login(email, password);
       setAuth(user, access_token);
       navigate("/dashboard");
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("Gagal login");
-      }
+    } catch (err) {
+      setError(getApiErrorMessage(err, "Username atau Password salah"));
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +64,7 @@ export default function LoginPage() {
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="mb-3">
             <label className="form-label small fw-semibold">Username</label>
             <div className="input-group">
@@ -70,7 +75,11 @@ export default function LoginPage() {
                 type="text"
                 className="form-control"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  // Bersihkan error begitu user mulai mengetik lagi
+                  if (error) setError(null);
+                }}
                 disabled={isLoading}
                 autoFocus
                 required
@@ -88,7 +97,10 @@ export default function LoginPage() {
                 type="password"
                 className="form-control"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (error) setError(null);
+                }}
                 disabled={isLoading}
                 required
               />
