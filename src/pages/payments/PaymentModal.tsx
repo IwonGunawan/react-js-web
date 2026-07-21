@@ -316,7 +316,7 @@ function ReceiptStep({
       {/* Icon status */}
       <div
         className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
-        style={{ width: 64, height: 64, background: "#e8f5e9" }}
+        style={{ width: 64, height: 64, background: "var(--cs-primary-soft)" }}
       >
         <i
           className="bi bi-check-lg fs-3"
@@ -333,7 +333,7 @@ function ReceiptStep({
         style={{
           fontFamily: "monospace",
           fontSize: "0.82rem",
-          background: "#fafafa",
+          background: "var(--cs-neutral-soft)",
         }}
       >
         <p className="text-center fw-bold mb-1">STRUK PEMBAYARAN AIR</p>

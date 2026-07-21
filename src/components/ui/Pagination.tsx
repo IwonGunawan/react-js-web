@@ -45,7 +45,7 @@ export default function Pagination({ page, totalPages, onChange }: Props) {
                       page === p
                         ? {
                             background: "var(--cs-primary)",
-                            borderColor: "var(--css-primary)",
+                            borderColor: "var(--cs-primary)",
                           }
                         : {}
                     }

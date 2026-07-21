@@ -21,22 +21,22 @@ export default function DashboardPage() {
           label: "Pemasukan Bulan Ini",
           value: formatRupiah(summary.incomeThisMonth),
           icon: "bi-cash-stack",
-          bgColor: "#e8f5e9",
+          bgColor: "var(--cs-primary-soft)",
           iconColor: "var(--cs-primary)",
         },
         {
           label: "Sudah Lunas",
           value: summary.paidCount.toString(),
           icon: "bi-check-circle",
-          bgColor: "#e3f2fd",
-          iconColor: "#1565c0",
+          bgColor: "var(--cs-info-soft)",
+          iconColor: "var(--cs-info)",
         },
         {
           label: "Belum Bayar",
           value: summary.unpaidCount.toString(),
           icon: "bi-exclamation-circle",
-          bgColor: "#fff3e0",
-          iconColor: "#e65100",
+          bgColor: "var(--cs-warning-soft)",
+          iconColor: "var(--cs-warning)",
         },
         {
           label: "Total Tunggakan Teratas",
@@ -47,8 +47,8 @@ export default function DashboardPage() {
                 )
               : "Rp.0",
           icon: "bi-clock-history",
-          bgColor: "#fce4ec",
-          iconColor: "#c62828",
+          bgColor: "var(--cs-danger-soft)",
+          iconColor: "var(--cs-danger)",
         },
       ]
     : [];
@@ -139,8 +139,8 @@ export default function DashboardPage() {
                             width: 22,
                             height: 22,
                             fontSize: "0.7rem",
-                            background: index === 0 ? "#fce4ec" : "#f5f5f5",
-                            color: index === 0 ? "#c62828" : "#666",
+                            background: index === 0 ? "var(--cs-danger-soft)" : "var(--cs-neutral-soft)",
+                            color: index === 0 ? "var(--cs-danger)" : "var(--cs-text-secondary)",
                             flexShrink: 0,
                           }}
                         >

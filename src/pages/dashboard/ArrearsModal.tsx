@@ -64,20 +64,20 @@ export default function ArrearsModal({
                           fontSize: "0.75rem",
                           background:
                             index === 0
-                              ? "#fce4ec"
+                              ? "var(--cs-danger-soft)"
                               : index === 1
-                                ? "#fff3e0"
+                                ? "var(--cs-warning-soft)"
                                 : index === 2
-                                  ? "#e8f5e9"
-                                  : "#f5f5f5",
+                                  ? "var(--cs-primary-soft)"
+                                  : "var(--cs-neutral-soft)",
                           color:
                             index === 0
-                              ? "#c62828"
+                              ? "var(--cs-danger)"
                               : index === 1
-                                ? "#e65100"
+                                ? "var(--cs-warning)"
                                 : index === 2
-                                  ? "#2e7d32"
-                                  : "#666",
+                                  ? "var(--cs-primary)"
+                                  : "var(--cs-text-secondary)",
                         }}
                       >
                         {index + 1}

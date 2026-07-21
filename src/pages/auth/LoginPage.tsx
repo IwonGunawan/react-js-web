@@ -39,7 +39,7 @@ export default function LoginPage() {
         <div className="text-center mb-4">
           <div
             className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
-            style={{ width: 64, height: 64, background: "#e8f5e9" }}
+            style={{ width: 64, height: 64, background: "var(--cs-primary-soft)" }}
           >
             <i
               className="bi bi-droplet-fill fs-3"
@@ -61,13 +61,13 @@ export default function LoginPage() {
         {/* Form */}
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label small fw-semibold">Email</label>
+            <label className="form-label small fw-semibold">Username</label>
             <div className="input-group">
               <span className="input-group-text">
                 <i className="bi bi-envelope text-muted" />
               </span>
               <input
-                type="email"
+                type="text"
                 className="form-control"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

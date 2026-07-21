@@ -73,9 +73,14 @@ export default function UsersPage() {
                           style={{
                             width: 32,
                             height: 32,
-                            background: u.level === "0" ? "#e8f5e9" : "#e3f2fd",
+                            background:
+                              u.level === "0"
+                                ? "var(--cs-primary-soft)"
+                                : "var(--cs-info-soft)",
                             color:
-                              u.level === "0" ? "var(--cs-primary)" : "#1565c0",
+                              u.level === "0"
+                                ? "var(--cs-primary)"
+                                : "var(--cs-info)",
                             fontSize: "0.8rem",
                             fontWeight: 700,
                           }}
