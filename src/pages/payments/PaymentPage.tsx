@@ -30,9 +30,6 @@ export default function PaymentsPage() {
     null,
   );
 
-  // Hanya customer yang sudah dicek (isChecked=1) yang bisa dibayar
-  // const payableCount = data.filter((c) => c.isChecked === 1).length;
-
   return (
     <div>
       {/* Header */}
@@ -113,7 +110,7 @@ export default function PaymentsPage() {
                         )}
                       </td>
                       <td className="text-end">
-                        {c.finalTotal > 0 && (
+                        {/* {c.finalTotal > 0 && (
                           <button
                             className="btn btn-sm btn-primary me-1"
                             onClick={() => setPayModal(c)}
@@ -121,7 +118,7 @@ export default function PaymentsPage() {
                             <i className="bi bi-cash-coin me-1" />
                             Bayar
                           </button>
-                        )}
+                        )} */}
                         <button
                           className="btn btn-sm btn-outline-secondary me-1"
                           title="History pembayaran"
