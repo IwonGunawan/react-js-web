@@ -9,9 +9,18 @@ import EmptyState from "../../components/ui/EmptyState";
 import Pagination from "../../components/ui/Pagination";
 import CustomerFormModal from "./CustomerFormModal";
 
+type StatusTab = "0" | "1";
+
+const TABS: { key: StatusTab; label: string; icon: string }[] = [
+  { key: "0", label: "Aktif", icon: "bi-person-check" },
+  { key: "1", label: "Non Aktif", icon: "bi-person-x" },
+];
+
 export default function CustomerPage() {
   const { user } = useAuthStore();
   const isAdmin = user?.level == "0";
+
+  const [activeTab, setActiveTab] = useState<StatusTab>("0");
 
   const {
     customers,
@@ -23,7 +32,7 @@ export default function CustomerPage() {
     updateQuery,
     setPage,
     refetch,
-  } = useCustomer();
+  } = useCustomer({ status: activeTab });
   const { villages } = useVillage();
 
   // Modal state
@@ -59,14 +68,39 @@ export default function CustomerPage() {
       <div className="d-flex justify-content-between align-item-center mb-4">
         <div>
           <h5 className="fw-bold mb-0">Pelanggan</h5>
-          <p className="text-muted small mb-0">{totalData} Total Pelanggan</p>
+          <p className="text-muted small mb-0">
+            {totalData} {activeTab === "0" ? "Pelanggan Aktif" : "Pelanggan Non Aktif"}
+          </p>
         </div>
-        {isAdmin && (
+        {isAdmin && activeTab === "0" && (
           <button className="btn btn-primary btn-sm pe-3" onClick={openCreate}>
             <i className="bi bi-plus-lg me-1" /> Tambah
           </button>
         )}
       </div>
+
+      {/* Tabs */}
+      <ul className="nav nav-tabs mb-3">
+        {TABS.map((t) => (
+          <li key={t.key} className="nav-item">
+            <button
+              className={`nav-link ${activeTab === t.key ? "active fw-semibold" : "text-muted"}`}
+              style={
+                activeTab === t.key
+                  ? {
+                      color: "var(--cs-primary)",
+                      borderBottomColor: "var(--cs-primary)",
+                    }
+                  : {}
+              }
+              onClick={() => setActiveTab(t.key)}
+            >
+              <i className={`bi ${t.icon} me-1`} />
+              {t.label}
+            </button>
+          </li>
+        ))}
+      </ul>
 
       {/* Filter Bar */}
       <div className="stat-card mb-3">
@@ -119,9 +153,9 @@ export default function CustomerPage() {
                 <thead>
                   <tr>
                     <th>Kode</th>
+                    <th>Prefix</th>
                     <th>Nama</th>
                     <th>Wilayah</th>
-                    <th>Status</th>
                     {isAdmin && <th className="text-end">action</th>}
                   </tr>
                 </thead>
@@ -133,19 +167,13 @@ export default function CustomerPage() {
                           {c.code}
                         </span>
                       </td>
+                      <td>{c.prefix?.prefix}</td>
                       <td>
                         <p className="mb-0 fw-semibold small">{c.name}</p>
                       </td>
                       <td>
                         <span className="small text-muted">
                           {c.village?.name ?? ""}
-                        </span>
-                      </td>
-                      <td>
-                        <span
-                          className={`badge ${c.deleted == "0" ? "badge-status-lunas" : "badge-status-kurang"}`}
-                        >
-                          {c.deleted == "0" ? "Aktif" : "InActive"}
                         </span>
                       </td>
                       {isAdmin && (

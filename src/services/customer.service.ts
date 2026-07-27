@@ -6,6 +6,8 @@ interface QueryCustomer {
   search?: string;
   page?: number;
   limit?: number;
+  /** '0' = aktif, '1' = non-aktif / history */
+  status?: "0" | "1";
 }
 
 interface CreateCustomer {
@@ -15,21 +17,21 @@ interface CreateCustomer {
   village_id: number;
 }
 
-
-
 export const customerService = {
-  getAll: (params?: QueryCustomer) => 
-    api.get<PaginatedResponse<Customer>>('/customers', {params}).then(r => r.data),
-  
-  getOne: (id: number) => 
-    api.get(`customers/${id}`).then(r => r.data),
-  
-  create: (payload: CreateCustomer) => 
-    api.post<Customer>('/customers', payload).then(r => r.data),
+  getAll: (params?: QueryCustomer) =>
+    api
+      .get<PaginatedResponse<Customer>>("/customers", { params })
+      .then((r) => r.data),
 
-  update: (id: number, payload: Partial<CreateCustomer>) => 
-    api.put<Customer>(`/customers/${id}`, payload).then(r => r.data),
+  getOne: (id: number) =>
+    api.get(`customers/${id}`).then((r) => r.data),
 
-  delete: (id:number) => 
-    api.delete<Customer>(`/customers/${id}`).then(r => r.data),
-}
+  create: (payload: CreateCustomer) =>
+    api.post<Customer>("/customers", payload).then((r) => r.data),
+
+  update: (id: number, payload: Partial<CreateCustomer>) =>
+    api.put<Customer>(`/customers/${id}`, payload).then((r) => r.data),
+
+  delete: (id: number) =>
+    api.delete<Customer>(`/customers/${id}`).then((r) => r.data),
+};
