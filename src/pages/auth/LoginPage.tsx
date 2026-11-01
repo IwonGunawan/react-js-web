@@ -7,6 +7,8 @@ import { getApiErrorMessage } from "../../utils";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,48 +40,92 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-card">
-        {/* Logo */}
-        <div className="text-center mb-4">
-          <div
-            className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
-            style={{ width: 64, height: 64, background: "var(--cs-primary-soft)" }}
-          >
-            <i
-              className="bi bi-droplet-fill fs-3"
-              style={{ color: "var(--cs-primary)" }}
-            />
-          </div>
-          <h4 className="fw-bold mb-0">Cikaret Setra</h4>
-          <p className="text-muted small">Sistem Pembayaran Air</p>
+    <div className="login-shell">
+      {/* Panel brand — disembunyikan di layar kecil */}
+      <section className="login-brand-panel">
+        <div className="login-brand-row">
+          <span className="logo">
+            <i className="bi bi-droplet-fill" aria-hidden="true" />
+          </span>
+          <span className="name">Cikaret Setra</span>
         </div>
 
-        {/* Error Alert */}
-        {error && (
-          <div className="alert alert-danger py-2 small" role="alert">
-            <i className="bi bi-exclamation-circle me-2" />
-            {error}
-          </div>
-        )}
+        <div className="login-brand-copy">
+          <h2>
+            Sistem pembayaran air
+            <br />
+            yang rapi dan terukur.
+          </h2>
+          <p>
+            Kelola pelanggan, pencatatan meter, pembayaran, hingga laporan
+            bulanan dalam satu tempat.
+          </p>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} noValidate>
+          <ul className="login-features">
+            <li>
+              <span className="tick">
+                <i className="bi bi-check-lg" aria-hidden="true" />
+              </span>
+              Data pelanggan &amp; tarif terpusat
+            </li>
+            <li>
+              <span className="tick">
+                <i className="bi bi-check-lg" aria-hidden="true" />
+              </span>
+              Catat meter dan pembayaran lebih cepat
+            </li>
+            <li>
+              <span className="tick">
+                <i className="bi bi-check-lg" aria-hidden="true" />
+              </span>
+              Laporan tunggakan otomatis
+            </li>
+          </ul>
+        </div>
+
+        <div className="login-brand-foot">
+          © 2026 Cikaret Setra · Sistem Pembayaran Air
+        </div>
+      </section>
+
+      {/* Panel form */}
+      <section className="login-form-panel">
+        <form className="login-form" onSubmit={handleSubmit} noValidate>
+          <span className="eyebrow">Portal Petugas</span>
+          <h1>Masuk ke akun Anda</h1>
+          <p className="sub">
+            Gunakan username dan password yang diberikan administrator.
+          </p>
+
+          {error && (
+            <div
+              className="alert alert-danger d-flex align-items-center gap-2 mb-3"
+              role="alert"
+            >
+              <i className="bi bi-exclamation-circle" aria-hidden="true" />
+              {error}
+            </div>
+          )}
+
           <div className="mb-3">
-            <label className="form-label small fw-semibold">Username</label>
+            <label className="form-label" htmlFor="login-username">
+              Username
+            </label>
             <div className="input-group">
               <span className="input-group-text">
-                <i className="bi bi-envelope text-muted" />
+                <i className="bi bi-person" aria-hidden="true" />
               </span>
               <input
+                id="login-username"
                 type="text"
                 className="form-control"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
-                  // Bersihkan error begitu user mulai mengetik lagi
                   if (error) setError(null);
                 }}
+                placeholder="Masukkan username"
+                autoComplete="username"
                 disabled={isLoading}
                 autoFocus
                 required
@@ -87,24 +133,60 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="mb-4">
-            <label className="form-label small fw-semibold">Password</label>
+          <div className="mb-3">
+            <label className="form-label" htmlFor="login-password">
+              Password
+            </label>
             <div className="input-group">
               <span className="input-group-text">
-                <i className="bi bi-lock text-muted" />
+                <i className="bi bi-lock" aria-hidden="true" />
               </span>
               <input
-                type="password"
+                id="login-password"
+                type={showPassword ? "text" : "password"}
                 className="form-control"
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
                   if (error) setError(null);
                 }}
+                placeholder="Masukkan password"
+                autoComplete="current-password"
                 disabled={isLoading}
                 required
               />
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                aria-label={
+                  showPassword ? "Sembunyikan password" : "Tampilkan password"
+                }
+                onClick={() => setShowPassword((value) => !value)}
+              >
+                <i
+                  className={`bi ${
+                    showPassword ? "bi-eye-slash" : "bi-eye"
+                  }`}
+                  aria-hidden="true"
+                />
+              </button>
             </div>
+          </div>
+
+          <div className="form-check my-3">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="login-remember"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+            />
+            <label
+              className="form-check-label small text-muted"
+              htmlFor="login-remember"
+            >
+              Ingat saya di perangkat ini
+            </label>
           </div>
 
           <button
@@ -114,18 +196,22 @@ export default function LoginPage() {
           >
             {isLoading ? (
               <>
-                <span className="spinner-border spinner-border-sm me-2" />
+                <span className="spinner-border spinner-border-sm" />
                 Masuk...
               </>
             ) : (
               <>
-                <i className="bi bi-box-arrow-in-right me-2" />
                 Masuk
+                <i className="bi bi-arrow-right" aria-hidden="true" />
               </>
             )}
           </button>
+
+          <p className="login-foot">
+            Butuh bantuan? Hubungi kantor pengelola air setempat.
+          </p>
         </form>
-      </div>
+      </section>
     </div>
   );
 }

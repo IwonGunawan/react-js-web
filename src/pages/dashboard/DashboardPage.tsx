@@ -1,5 +1,6 @@
 import { useState } from "react";
 import EmptyState from "../../components/ui/EmptyState";
+import PageHeader from "../../components/ui/PageHeader";
 import { Spinner } from "../../components/ui/Spinner";
 import { useDashboard } from "../../hooks/useDashboard";
 import type { IncomeChart } from "../../services/dashboard.service";
@@ -58,24 +59,23 @@ export default function DashboardPage() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h5 className="fw-bold mb-0">Dashboard</h5>
-          <p className="text-muted small mb-0">
-            Selamat datang kembali, {user?.name} -{" "}
+      <PageHeader
+        title="Dashboard"
+        description={
+          <>
+            Selamat datang kembali, {user?.name} ·{" "}
             {MONTH_NAMES[summary?.thisMonth.month ?? 0]}{" "}
             {summary?.thisMonth.year}
-          </p>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Stat Cards */}
       <div className="row g-3 mb-4">
         {stats.map((s) => (
-          <div key={s.label} className="col-md-6 col-xl-3">
+          <div key={s.label} className="col-6 col-xl-3">
             <div className="stat-card">
-              <div className="d-flex justify-content-between align-item-start">
+              <div className="d-flex justify-content-between align-items-start">
                 <div>
                   <p className="text-muted small mb-1">{s.label}</p>
                   <h5 className="fw-bold mb-0">{s.value}</h5>
@@ -203,23 +203,16 @@ function IncomeChart({ data }: { data: IncomeChart[] }) {
   const max = Math.max(...data.map((a) => a.total));
 
   return (
-    <div className="d-flex align-items-end gap-2" style={{ height: 220 }}>
+    <div className="income-chart d-flex align-items-end">
       {data.map((dta) => {
         const height = max > 0 ? (dta.total / max) * 200 : 0;
         return (
           <div
             key={`${dta.year}-${dta.month}`}
-            className="d-flex flex-column align-items-center flex-grow-1"
+            className="income-chart-col d-flex flex-column align-items-center"
             title={formatRupiah(dta.total)}
           >
-            <span
-              className="text-muted mb-1"
-              style={{
-                fontSize: "0.7rem",
-                fontWeight: 300,
-                whiteSpace: "nowrap",
-              }}
-            >
+            <span className="income-chart-value text-muted mb-1">
               {formatRupiah(dta.total)}
             </span>
             <div
@@ -234,7 +227,7 @@ function IncomeChart({ data }: { data: IncomeChart[] }) {
               }}
               className="chart-bar"
             />
-            <span style={{ fontSize: "0.65 rem" }} className="text-muted mt-1">
+            <span className="income-chart-label text-muted mt-1">
               {MONTH_NAMES[dta.month]}
             </span>
           </div>

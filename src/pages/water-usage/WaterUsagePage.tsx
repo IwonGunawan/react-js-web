@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useWaterUsage } from "../../hooks/useWaterUsage";
 import EmptyState from "../../components/ui/EmptyState";
+import PageHeader from "../../components/ui/PageHeader";
 import Pagination from "../../components/ui/Pagination";
 import SearchInput from "../../components/ui/SearchInput";
 import { useVillage } from "../../hooks/useVillage";
@@ -34,38 +35,35 @@ export default function WaterUsagePage() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h5 className="fw-bold mb-0">Cek Air</h5>
-          <p className="text-muted small mb-0">{totalItems} total pelanggan</p>
-        </div>
-
-        {/* Progress bulan ini */}
-        <div className="text-end d-none d-md-block">
-          <p className="small text-muted mb-1">Progress bulan ini</p>
-          <div className="d-flex align-items-center gap-2">
-            <div
-              className="progress flex-grow-1"
-              style={{ width: 120, height: 6 }}
-            >
+      <PageHeader
+        title="Cek Air"
+        description={`${totalItems} total pelanggan`}
+        actions={
+          <div className="text-end d-none d-md-block">
+            <p className="small text-muted mb-1">Progress bulan ini</p>
+            <div className="d-flex align-items-center gap-2">
               <div
-                className="progress-bar"
-                style={{
-                  width:
-                    totalItems > 0
-                      ? `${(checkedCount / totalItems) * 100}%`
-                      : "0%",
-                  background: "var(--cs-primary)",
-                }}
-              />
+                className="progress flex-grow-1"
+                style={{ width: 120, height: 6 }}
+              >
+                <div
+                  className="progress-bar"
+                  style={{
+                    width:
+                      totalItems > 0
+                        ? `${(checkedCount / totalItems) * 100}%`
+                        : "0%",
+                    background: "var(--cs-primary)",
+                  }}
+                />
+              </div>
+              <span className="small fw-semibold">
+                {checkedCount}/{totalItems}
+              </span>
             </div>
-            <span className="small fw-semibold">
-              {checkedCount}/{totalItems}
-            </span>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Filter */}
       <div className="stat-card mb-3">

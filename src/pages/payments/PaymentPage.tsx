@@ -1,5 +1,6 @@
 import { useState } from "react";
 import EmptyState from "../../components/ui/EmptyState";
+import PageHeader from "../../components/ui/PageHeader";
 import Pagination from "../../components/ui/Pagination";
 import SearchInput from "../../components/ui/SearchInput";
 import { useVillage } from "../../hooks/useVillage";
@@ -32,17 +33,10 @@ export default function PaymentsPage() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h5 className="fw-bold mb-0">Bayar Air</h5>
-          <p className="text-muted small mb-0">{totalItems} total pelanggan</p>
-        </div>
-        {/* <span className="badge badge-status-lunas">
-          <i className="bi bi-check-circle me-1" />
-          {payableCount} siap dibayar
-        </span> */}
-      </div>
+      <PageHeader
+        title="Bayar Air"
+        description={`${totalItems} total pelanggan`}
+      />
 
       {/* Filter */}
       <div className="stat-card mb-3">

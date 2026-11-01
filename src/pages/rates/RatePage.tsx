@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { rateService, type Rate } from "../../services/rate.service";
 import EmptyState from "../../components/ui/EmptyState";
+import PageHeader from "../../components/ui/PageHeader";
 import { Spinner } from "../../components/ui/Spinner";
 
 const formatRupiah = (n: number) => "Rp " + n.toLocaleString("id-ID");
@@ -54,19 +55,19 @@ export default function RatesPage() {
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h5 className="fw-bold mb-0">Manajemen Tarif</h5>
-          <p className="text-muted small mb-0">History perubahan tarif air</p>
-        </div>
-        <button
-          className="btn btn-primary btn-sm"
-          onClick={() => setShowForm(!showForm)}
-        >
-          <i className="bi bi-plus-lg me-1" />
-          Set Tarif Baru
-        </button>
-      </div>
+      <PageHeader
+        title="Manajemen Tarif"
+        description="Riwayat perubahan tarif air"
+        actions={
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => setShowForm(!showForm)}
+          >
+            <i className="bi bi-plus-lg" aria-hidden="true" />
+            Set Tarif Baru
+          </button>
+        }
+      />
 
       {/* Current rate highlight */}
       {current && (

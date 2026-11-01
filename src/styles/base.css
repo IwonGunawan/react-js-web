@@ -1,0 +1,92 @@
+/* ============================================================
+   Base
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--cs-bg);
+  color: var(--cs-text-primary);
+  font-family: var(--bs-font-sans-serif);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--cs-text-primary);
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--cs-primary-dark);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--cs-primary);
+}
+
+.text-muted {
+  color: var(--cs-text-secondary) !important;
+}
+
+small,
+.small {
+  font-size: 0.8125rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cs-primary);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--cs-primary-soft);
+  color: var(--cs-primary-dark);
+}
+
+/* Scrollbar halus untuk area yang bisa di-scroll */
+.sidebar-nav,
+.table-responsive {
+  scrollbar-width: thin;
+  scrollbar-color: #d5e0e6 transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar,
+.table-responsive::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb,
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #d5e0e6;
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -7,6 +7,7 @@ import SearchInput from "../../components/ui/SearchInput";
 import { Spinner } from "../../components/ui/Spinner";
 import EmptyState from "../../components/ui/EmptyState";
 import Pagination from "../../components/ui/Pagination";
+import PageHeader from "../../components/ui/PageHeader";
 import CustomerFormModal from "./CustomerFormModal";
 
 type StatusTab = "0" | "1";
@@ -64,20 +65,19 @@ export default function CustomerPage() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="d-flex justify-content-between align-item-center mb-4">
-        <div>
-          <h5 className="fw-bold mb-0">Pelanggan</h5>
-          <p className="text-muted small mb-0">
-            {totalData} {activeTab === "0" ? "Pelanggan Aktif" : "Pelanggan Non Aktif"}
-          </p>
-        </div>
-        {isAdmin && activeTab === "0" && (
-          <button className="btn btn-primary btn-sm pe-3" onClick={openCreate}>
-            <i className="bi bi-plus-lg me-1" /> Tambah
-          </button>
-        )}
-      </div>
+      <PageHeader
+        title="Pelanggan"
+        description={`${totalData} ${
+          activeTab === "0" ? "Pelanggan Aktif" : "Pelanggan Non Aktif"
+        }`}
+        actions={
+          isAdmin && activeTab === "0" ? (
+            <button className="btn btn-primary btn-sm" onClick={openCreate}>
+              <i className="bi bi-plus-lg" aria-hidden="true" /> Tambah
+            </button>
+          ) : undefined
+        }
+      />
 
       {/* Tabs */}
       <ul className="nav nav-tabs mb-3">
@@ -118,7 +118,6 @@ export default function CustomerPage() {
               const villageId = e.target.value
                 ? Number(e.target.value)
                 : undefined;
-              console.log({ villageId });
               updateQuery({ village_id: villageId });
             }}
           >

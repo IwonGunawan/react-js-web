@@ -81,7 +81,7 @@ export default function CustomerFormModal({
   return (
     <div
       className="modal show d-block"
-      style={{ background: "rgba(0,0,0,0,5)" }}
+      style={{ background: "rgba(15, 42, 53, 0.45)" }}
     >
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">

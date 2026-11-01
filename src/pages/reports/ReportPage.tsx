@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PageHeader from "../../components/ui/PageHeader";
 import MonthlyReport from "./MonthlyReport";
 import UnpaidReport from "./UnpaidReport";
 
@@ -30,13 +31,10 @@ export default function ReportsPage() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="mb-4">
-        <h5 className="fw-bold mb-0">Laporan</h5>
-        <p className="text-muted small mb-0">
-          Data rekap pembayaran dan tunggakan
-        </p>
-      </div>
+      <PageHeader
+        title="Laporan"
+        description="Data rekap pembayaran dan tunggakan"
+      />
 
       {/* Filter periode — shared untuk semua tab */}
       <div className="stat-card mb-3">

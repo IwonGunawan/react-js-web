@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { userService, type AppUser } from "../../services/user.service";
 import EmptyState from "../../components/ui/EmptyState";
+import PageHeader from "../../components/ui/PageHeader";
 import UserFormModal from "./UserFormModal";
 import { Spinner } from "../../components/ui/Spinner";
 
@@ -32,19 +33,19 @@ export default function UsersPage() {
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h5 className="fw-bold mb-0">Manajemen Petugas</h5>
-          <p className="text-muted small mb-0">{users.length} akun terdaftar</p>
-        </div>
-        <button
-          className="btn btn-primary btn-sm"
-          onClick={() => setModal("create")}
-        >
-          <i className="bi bi-plus-lg me-1" />
-          Tambah Petugas
-        </button>
-      </div>
+      <PageHeader
+        title="Manajemen Petugas"
+        description={`${users.length} akun terdaftar`}
+        actions={
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => setModal("create")}
+          >
+            <i className="bi bi-plus-lg" aria-hidden="true" />
+            Tambah Petugas
+          </button>
+        }
+      />
 
       <div className="stat-card">
         {isLoading ? (
