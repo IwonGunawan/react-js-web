@@ -1,16 +1,28 @@
+import type { ReactNode } from "react";
+
 interface Props {
   message?: string;
+  title?: string;
+  description?: string;
   icons?: string;
+  action?: ReactNode;
 }
 
 export default function EmptyState({
   message = "Tidak ada data",
+  title,
+  description,
   icons = "bi-inbox",
+  action,
 }: Props) {
   return (
-    <div className="text-center py-5 text-muted">
-      <i className={`bi ${icons} fs-1 d-block mb-2 opacity-25`} />
-      <p className="small mb-0">{message}</p>
+    <div className="cs-empty">
+      <span className="cs-empty-icon">
+        <i className={`bi ${icons}`} aria-hidden="true" />
+      </span>
+      <p className="cs-empty-title">{title ?? message}</p>
+      {description && <p className="cs-empty-desc">{description}</p>}
+      {action && <div className="mt-3">{action}</div>}
     </div>
   );
 }

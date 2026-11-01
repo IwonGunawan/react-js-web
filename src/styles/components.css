@@ -630,3 +630,283 @@
     box-shadow: var(--cs-shadow-card);
   }
 }
+
+/* ── Primitives: Card, Badge, Field, Skeleton, Modal ─────── */
+
+.cs-card {
+  background: var(--cs-card);
+  border: 1px solid var(--cs-border);
+  border-radius: var(--cs-radius);
+  box-shadow: var(--cs-shadow-card);
+}
+
+.cs-card-padded {
+  padding: 20px;
+}
+
+.cs-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 23px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cs-badge-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.cs-badge-success {
+  background: var(--cs-success-soft);
+  color: var(--cs-success-ink);
+}
+
+.cs-badge-warning {
+  background: var(--cs-warning-soft);
+  color: var(--cs-warning-ink);
+}
+
+.cs-badge-danger {
+  background: var(--cs-danger-soft);
+  color: var(--cs-danger-ink);
+}
+
+.cs-badge-info {
+  background: var(--cs-primary-soft);
+  color: var(--cs-primary-dark);
+}
+
+.cs-badge-neutral {
+  background: var(--cs-neutral-soft);
+  color: #526b77;
+}
+
+.field-hint {
+  margin: 6px 0 0;
+  color: var(--cs-text-secondary);
+  font-size: 0.72rem;
+}
+
+.field-error {
+  margin: 6px 0 0;
+  color: var(--cs-danger-ink);
+  font-size: 0.72rem;
+}
+
+.cs-skeleton {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #eef3f6 25%, #f6f9fa 37%, #eef3f6 63%);
+  background-size: 400% 100%;
+  animation: cs-skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes cs-skeleton-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+.cs-skeleton-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.cs-skeleton-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  align-items: center;
+  height: 52px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--cs-border-soft);
+}
+
+.cs-skeleton-row:last-child {
+  border-bottom: 0;
+}
+
+.cs-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  overflow-y: auto;
+  background: rgba(15, 42, 53, 0.45);
+  animation: cs-fade-in 0.15s ease;
+}
+
+.cs-modal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  overflow: hidden;
+  background: var(--cs-card);
+  border-radius: var(--cs-radius-lg);
+  box-shadow: var(--cs-shadow-modal);
+  animation: cs-modal-in 0.18s ease;
+}
+
+.cs-modal-sm {
+  max-width: 400px;
+}
+
+.cs-modal-md {
+  max-width: 520px;
+}
+
+.cs-modal-lg {
+  max-width: 760px;
+}
+
+.cs-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--cs-border-soft);
+}
+
+.cs-modal-heading {
+  min-width: 0;
+}
+
+.cs-modal-heading h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.cs-modal-heading p {
+  margin: 3px 0 0;
+  color: var(--cs-text-secondary);
+  font-size: 0.78rem;
+}
+
+.cs-modal-header .icon-btn {
+  width: 30px;
+  height: 30px;
+  margin: -2px -4px 0 0;
+  font-size: 0.85rem;
+}
+
+.cs-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.cs-modal-body.is-flush {
+  padding: 0;
+}
+
+.cs-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--cs-border-soft);
+  background: var(--cs-card);
+}
+
+@keyframes cs-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes cs-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .cs-modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .cs-modal,
+  .cs-modal-sm,
+  .cs-modal-md,
+  .cs-modal-lg {
+    max-width: 100%;
+    max-height: 92dvh;
+    border-radius: var(--cs-radius-lg) var(--cs-radius-lg) 0 0;
+  }
+
+  .cs-modal-footer > .btn {
+    flex: 1;
+  }
+}
+
+.rank-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--cs-neutral-soft);
+  color: var(--cs-text-secondary);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.rank-circle.top {
+  background: var(--cs-danger-soft);
+  color: var(--cs-danger-ink);
+}
+
+.cs-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.cs-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  background: var(--cs-neutral-soft);
+  color: var(--cs-text-muted);
+  font-size: 1.35rem;
+}
+
+.cs-empty-title {
+  margin: 0;
+  color: var(--cs-text-primary);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.cs-empty-desc {
+  margin: 4px 0 0;
+  color: var(--cs-text-secondary);
+  font-size: 0.78rem;
+}

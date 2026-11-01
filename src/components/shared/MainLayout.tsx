@@ -17,10 +17,12 @@ export default function MainLayout() {
     localStorage.setItem(COLLAPSE_KEY, collapsed ? "1" : "0");
   }, [collapsed]);
 
-  // Tutup drawer setiap pindah halaman.
-  useEffect(() => {
+  // Tutup drawer setiap pindah halaman (derived state saat render).
+  const [lastPath, setLastPath] = useState(location.pathname);
+  if (lastPath !== location.pathname) {
+    setLastPath(location.pathname);
     setMobileOpen(false);
-  }, [location.pathname]);
+  }
 
   // Kunci scroll body saat drawer mobile terbuka.
   useEffect(() => {

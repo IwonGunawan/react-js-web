@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import Button from "../../components/ui/Button";
+import Modal from "../../components/ui/Modal";
+import { Spinner } from "../../components/ui/Spinner";
 import {
   paymentService,
   type BillDetail,
 } from "../../services/payment.service";
 import type { WaterUsageCustomer } from "../../services/water-usage.service";
-import { Spinner } from "../../components/ui/Spinner";
 import {
   formatNumberInput,
   formatRupiah,
@@ -47,8 +49,10 @@ export default function PaymentModal({ customer, onSaved, onClose }: Props) {
       try {
         const data = await paymentService.getBill(customer.customerId);
         setBill(data);
-      } catch (err: any) {
-        setError(err.response?.data?.message ?? "Gagal memuat tagihan");
+      } catch (err) {
+        const message = (err as { response?: { data?: { message?: string } } })
+          .response?.data?.message;
+        setError(message ?? "Gagal memuat tagihan");
       } finally {
         setIsLoading(false);
       }
@@ -73,8 +77,10 @@ export default function PaymentModal({ customer, onSaved, onClose }: Props) {
       });
       setReceipt(result);
       setStep("receipt");
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? "Pembayaran gagal");
+    } catch (err) {
+      const message = (err as { response?: { data?: { message?: string } } })
+        .response?.data?.message;
+      setError(message ?? "Pembayaran gagal");
     } finally {
       setIsPaying(false);
     }
@@ -84,97 +90,64 @@ export default function PaymentModal({ customer, onSaved, onClose }: Props) {
     setCash(formatNumberInput(value));
   };
 
+  const footer =
+    step === "receipt" ? (
+      <Button size="sm" icon="bi-check-lg" onClick={onSaved}>
+        Selesai
+      </Button>
+    ) : !isLoading && bill ? (
+      <>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          disabled={isPaying}
+        >
+          Batal
+        </Button>
+        <Button
+          size="sm"
+          icon="bi-check-lg"
+          onClick={handlePay}
+          loading={isPaying}
+          disabled={cashAmount <= 0}
+        >
+          Proses Pembayaran
+        </Button>
+      </>
+    ) : undefined;
+
   return (
-    <div
-      className="modal show d-block"
-      style={{ background: "rgba(0,0,0,0.5)" }}
+    <Modal
+      title="Bayar Air"
+      description={`${customer.prefix} ${customer.name} — ${customer.code}`}
+      onClose={step === "receipt" ? onSaved : onClose}
+      closeDisabled={step !== "receipt" && isPaying}
+      footer={footer}
     >
-      <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content">
-          {/* Header */}
-          <div className="modal-header">
-            <div>
-              <h6 className="modal-title fw-bold mb-0">Bayar Air</h6>
-              <p className="text-muted small mb-0">
-                {customer.prefix} {customer.name} — {customer.code}
-              </p>
-            </div>
-            {step === "receipt" ? (
-              <button className="btn-close" onClick={onSaved} />
-            ) : (
-              <button
-                className="btn-close"
-                onClick={onClose}
-                disabled={isPaying}
-              />
-            )}
-          </div>
-
-          {/* Body */}
-          <div className="modal-body">
-            {isLoading ? (
-              <Spinner />
-            ) : error && step !== "receipt" ? (
-              <div className="alert alert-danger small">{error}</div>
-            ) : step === "bill" || step === "confirm" ? (
-              bill && (
-                <BillStep
-                  bill={bill}
-                  cash={cash}
-                  setCash={handleCashChange}
-                  saveChange={saveChange}
-                  setSaveChange={setSaveChange}
-                  change={change}
-                  isShortPay={isShortPay}
-                  isOverPay={isOverPay}
-                />
-              )
-            ) : receipt ? (
-              <ReceiptStep receipt={receipt} customer={customer} />
-            ) : null}
-          </div>
-
-          {/* Footer */}
-          {!isLoading && step !== "receipt" && bill && (
-            <div className="modal-footer">
-              <button
-                className="btn btn-sm btn-light"
-                onClick={onClose}
-                disabled={isPaying}
-              >
-                Batal
-              </button>
-              <button
-                className="btn btn-sm btn-primary"
-                onClick={handlePay}
-                disabled={isPaying || cashAmount <= 0}
-              >
-                {isPaying ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-1" />
-                    Memproses...
-                  </>
-                ) : (
-                  <>
-                    <i className="bi bi-check-lg me-1" />
-                    Proses Pembayaran
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-
-          {step === "receipt" && (
-            <div className="modal-footer">
-              <button className="btn btn-sm btn-primary" onClick={onSaved}>
-                <i className="bi bi-check-lg me-1" />
-                Selesai
-              </button>
-            </div>
-          )}
+      {isLoading ? (
+        <Spinner />
+      ) : error && step !== "receipt" ? (
+        <div className="alert alert-danger" role="alert">
+          {error}
         </div>
-      </div>
-    </div>
+      ) : step === "bill" || step === "confirm" ? (
+        bill && (
+          <BillStep
+            bill={bill}
+            cash={cash}
+            setCash={handleCashChange}
+            saveChange={saveChange}
+            setSaveChange={setSaveChange}
+            change={change}
+            isShortPay={isShortPay}
+            isOverPay={isOverPay}
+          />
+        )
+      ) : receipt ? (
+        <ReceiptStep receipt={receipt} customer={customer} />
+      ) : null}
+    </Modal>
   );
 }
 
@@ -207,7 +180,7 @@ function BillStep({
           <tbody>
             {bill.waterUsages.map(
               (b) =>
-                b.status == "0" && (
+                b.status === "0" && (
                   <tr key={b.waterUsageId}>
                     <td className="small text-muted">
                       Tagihan {MONTH_NAMES[b.month]} ({b.meterUsage}m³)
@@ -249,8 +222,11 @@ function BillStep({
 
       {/* Input cash */}
       <div className="mb-3">
-        <label className="form-label small fw-semibold">Uang Tunai</label>
+        <label className="form-label" htmlFor="payment-cash">
+          Uang Tunai
+        </label>
         <input
+          id="payment-cash"
           type="number"
           className="form-control text-center fw-bold"
           value={cash}

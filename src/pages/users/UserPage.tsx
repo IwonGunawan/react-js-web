@@ -134,6 +134,7 @@ export default function UsersPage() {
 
       {modal && (
         <UserFormModal
+          key={modal === "create" ? "new" : modal.id}
           user={modal === "create" ? null : modal}
           onSaved={() => {
             setModal(null);

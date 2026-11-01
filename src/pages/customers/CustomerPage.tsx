@@ -4,7 +4,7 @@ import { useVillage } from "../../hooks/useVillage";
 import { useAuthStore } from "../../stores/auth.store";
 import type { Customer } from "../../types";
 import SearchInput from "../../components/ui/SearchInput";
-import { Spinner } from "../../components/ui/Spinner";
+import { TableSkeleton } from "../../components/ui/Skeleton";
 import EmptyState from "../../components/ui/EmptyState";
 import Pagination from "../../components/ui/Pagination";
 import PageHeader from "../../components/ui/PageHeader";
@@ -140,7 +140,7 @@ export default function CustomerPage() {
       {/* Table  */}
       <div className="stat-card">
         {isLoading ? (
-          <Spinner />
+          <TableSkeleton rows={8} cols={isAdmin ? 5 : 4} />
         ) : error ? (
           <div className="alert alert-danger mb-0">{error}</div>
         ) : customers.length == 0 ? (
@@ -206,6 +206,7 @@ export default function CustomerPage() {
       {/* Modal Customer */}
       {modalOpen && (
         <CustomerFormModal
+          key={selectedCustomer?.id ?? "new"}
           customer={selectedCustomer}
           villages={villages}
           onSaved={handleSaved}

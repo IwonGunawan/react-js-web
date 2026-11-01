@@ -1,4 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Button from "../../components/ui/Button";
+import Field from "../../components/ui/Field";
+import Modal from "../../components/ui/Modal";
 import { userService, type AppUser } from "../../services/user.service";
 
 interface Props {
@@ -18,17 +21,6 @@ export default function UserFormModal({ user, onSaved, onClose }: Props) {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (user) {
-      setForm({
-        name: user.name,
-        email: user.email,
-        password: "",
-        level: user.level,
-      });
-    }
-  }, [user]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -58,125 +50,111 @@ export default function UserFormModal({ user, onSaved, onClose }: Props) {
         });
       }
       onSaved();
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? "Terjadi kesalahan");
+    } catch (err) {
+      const message = (err as { response?: { data?: { message?: string } } })
+        .response?.data?.message;
+      setError(message ?? "Terjadi kesalahan");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div
-      className="modal show d-block"
-      style={{ background: "rgba(0,0,0,0.5)" }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+    <Modal
+      size="sm"
+      title={isEdit ? "Edit Petugas" : "Tambah Petugas"}
+      description={
+        isEdit ? "Perbarui data akun petugas." : "Buat akun petugas baru."
+      }
+      onClose={onClose}
+      closeDisabled={isLoading}
+      footer={
+        <>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            disabled={isLoading}
+          >
+            Batal
+          </Button>
+          <Button
+            type="submit"
+            form="user-form"
+            size="sm"
+            icon="bi-check-lg"
+            loading={isLoading}
+          >
+            {isEdit ? "Simpan" : "Tambah"}
+          </Button>
+        </>
+      }
     >
-      <div className="modal-dialog modal-dialog-centered modal-sm">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h6 className="modal-title fw-bold">
-              {isEdit ? "Edit Petugas" : "Tambah Petugas"}
-            </h6>
-            <button
-              className="btn-close"
-              onClick={onClose}
-              disabled={isLoading}
-            />
+      <form id="user-form" onSubmit={handleSubmit}>
+        {error && (
+          <div className="alert alert-danger mb-3" role="alert">
+            {error}
           </div>
+        )}
 
-          <form onSubmit={handleSubmit}>
-            <div className="modal-body">
-              {error && (
-                <div className="alert alert-danger py-2 small">{error}</div>
-              )}
+        <Field label="Nama" htmlFor="user-name" required className="mb-3">
+          <input
+            id="user-name"
+            name="name"
+            className="form-control"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+        </Field>
 
-              <div className="mb-3">
-                <label className="form-label small fw-semibold">Nama</label>
-                <input
-                  name="name"
-                  className="form-control form-control-sm"
-                  value={form.name}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+        <Field label="Email" htmlFor="user-email" required className="mb-3">
+          <input
+            id="user-email"
+            name="email"
+            type="email"
+            className="form-control"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+        </Field>
 
-              <div className="mb-3">
-                <label className="form-label small fw-semibold">Email</label>
-                <input
-                  name="email"
-                  type="email"
-                  className="form-control form-control-sm"
-                  value={form.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+        {!isEdit && (
+          <Field
+            label="Password"
+            htmlFor="user-password"
+            hint="Minimal 6 karakter."
+            required
+            className="mb-3"
+          >
+            <input
+              id="user-password"
+              name="password"
+              type="password"
+              className="form-control"
+              value={form.password}
+              onChange={handleChange}
+              minLength={6}
+              required
+              placeholder="Min. 6 karakter"
+            />
+          </Field>
+        )}
 
-              {!isEdit && (
-                <div className="mb-3">
-                  <label className="form-label small fw-semibold">
-                    Password
-                  </label>
-                  <input
-                    name="password"
-                    type="password"
-                    className="form-control form-control-sm"
-                    value={form.password}
-                    onChange={handleChange}
-                    minLength={6}
-                    required
-                    placeholder="Min. 6 karakter"
-                  />
-                </div>
-              )}
-
-              <div className="mb-0">
-                <label className="form-label small fw-semibold">Role</label>
-                <select
-                  name="level"
-                  className="form-select form-select-sm"
-                  value={form.level}
-                  onChange={handleChange}
-                >
-                  <option value="1">Operator</option>
-                  <option value="0">Admin</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-sm btn-light"
-                onClick={onClose}
-                disabled={isLoading}
-              >
-                Batal
-              </button>
-              <button
-                type="submit"
-                className="btn btn-sm btn-primary"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-1" />
-                    Menyimpan...
-                  </>
-                ) : (
-                  <>
-                    <i className="bi bi-check-lg me-1" />
-                    {isEdit ? "Simpan" : "Tambah"}
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+        <Field label="Role" htmlFor="user-level">
+          <select
+            id="user-level"
+            name="level"
+            className="form-select"
+            value={form.level}
+            onChange={handleChange}
+          >
+            <option value="1">Operator</option>
+            <option value="0">Admin</option>
+          </select>
+        </Field>
+      </form>
+    </Modal>
   );
 }
