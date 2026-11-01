@@ -17,7 +17,6 @@ export const NAV_GROUPS: NavGroup[] = [
       { to: "/dashboard", icon: "bi-speedometer2", label: "Dashboard" },
       { to: "/customers", icon: "bi-people", label: "Pelanggan", adminOnly: true },
       { to: "/water-usage", icon: "bi-droplet", label: "Cek Air" },
-      { to: "/payments", icon: "bi-cash-coin", label: "Bayar Air" },
     ],
   },
   {
@@ -34,7 +33,6 @@ export const PAGE_TITLES: Record<string, string> = {
   "/dashboard": "Dashboard",
   "/customers": "Pelanggan",
   "/water-usage": "Cek Air",
-  "/payments": "Bayar Air",
   "/reports": "Laporan",
   "/rates": "Tarif",
   "/users": "Petugas",

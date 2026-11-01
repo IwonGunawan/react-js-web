@@ -16,7 +16,7 @@ const VARIANT_CLASS: Record<Variant, string> = {
   primary: "btn-primary",
   secondary: "btn-outline-secondary",
   ghost: "btn-light",
-  danger: "btn-danger",
+  danger: "btn-outline-danger",
 };
 
 export default function Button({
@@ -50,7 +50,12 @@ export default function Button({
       {loading ? (
         <span className="spinner-border spinner-border-sm" aria-hidden="true" />
       ) : (
-        icon && <i className={`bi ${icon}`} aria-hidden="true" />
+        icon && (
+          <i
+            className={`bi ${icon}${children ? " me-1" : ""}`}
+            aria-hidden="true"
+          />
+        )
       )}
       {children}
     </button>

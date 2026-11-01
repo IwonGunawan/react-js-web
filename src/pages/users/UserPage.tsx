@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { userService, type AppUser } from "../../services/user.service";
+import Badge from "../../components/ui/Badge";
+import Button from "../../components/ui/Button";
 import EmptyState from "../../components/ui/EmptyState";
 import PageHeader from "../../components/ui/PageHeader";
+import { TableSkeleton } from "../../components/ui/Skeleton";
 import UserFormModal from "./UserFormModal";
-import { Spinner } from "../../components/ui/Spinner";
 
 export default function UsersPage() {
   const [users, setUsers] = useState<AppUser[]>([]);
@@ -47,9 +49,9 @@ export default function UsersPage() {
         }
       />
 
-      <div className="stat-card">
+      <div className="list-card">
         {isLoading ? (
-          <Spinner />
+          <TableSkeleton rows={6} cols={5} />
         ) : users.length === 0 ? (
           <EmptyState message="Belum ada petugas terdaftar" />
         ) : (
@@ -95,34 +97,31 @@ export default function UsersPage() {
                       <span className="small text-muted">{u.email}</span>
                     </td>
                     <td>
-                      <span
-                        className={`badge ${u.level === "0" ? "badge-status-lunas" : "badge-status-lebih"}`}
-                      >
+                      <Badge tone={u.level === "0" ? "info" : "neutral"}>
                         {u.level === "0" ? "Admin" : "Operator"}
-                      </span>
+                      </Badge>
                     </td>
                     <td>
-                      <span
-                        className={`badge ${u.status === "0" ? "badge-status-lunas" : "badge-status-kurang"}`}
-                      >
+                      <Badge tone={u.status === "0" ? "success" : "danger"} dot>
                         {u.status === "0" ? "Aktif" : "Nonaktif"}
-                      </span>
+                      </Badge>
                     </td>
                     <td className="text-end">
-                      <button
-                        className="btn btn-sm btn-outline-secondary me-1"
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        icon="bi-pencil"
+                        aria-label={`Edit ${u.name}`}
+                        className="me-1"
                         onClick={() => setModal(u)}
-                      >
-                        <i className="bi bi-pencil" />
-                      </button>
-                      <button
-                        className={`btn btn-sm ${u.status === "0" ? "btn-outline-danger" : "btn-outline-success"}`}
+                      />
+                      <Button
+                        variant={u.status === "0" ? "danger" : "secondary"}
+                        size="sm"
+                        icon={u.status === "0" ? "bi-slash-circle" : "bi-check-circle"}
+                        aria-label={u.status === "0" ? `Nonaktifkan ${u.name}` : `Aktifkan ${u.name}`}
                         onClick={() => handleToggleStatus(u)}
-                      >
-                        <i
-                          className={`bi ${u.status === "0" ? "bi-slash-circle" : "bi-check-circle"}`}
-                        />
-                      </button>
+                      />
                     </td>
                   </tr>
                 ))}

@@ -910,3 +910,78 @@
   color: var(--cs-text-secondary);
   font-size: 0.78rem;
 }
+
+/* ── List card: toolbar + table + pagination dalam satu surface ── */
+
+.list-card {
+  overflow: hidden;
+  background: var(--cs-card);
+  border: 1px solid var(--cs-border);
+  border-radius: var(--cs-radius);
+  box-shadow: var(--cs-shadow-card);
+}
+
+.list-card-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--cs-border-soft);
+}
+
+.cs-search {
+  max-width: 300px;
+}
+
+.list-card-toolbar .input-group {
+  flex: 1 1 240px;
+  max-width: 340px;
+}
+
+.list-card-title {
+  padding: 16px 16px 0;
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.list-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--cs-border-soft);
+  background: #fbfcfd;
+}
+
+.list-card-footer:empty {
+  display: none;
+}
+
+.list-card .table > :not(caption) > * > * {
+  padding-right: 16px;
+  padding-left: 16px;
+}
+
+.list-card .table thead th {
+  background: transparent;
+}
+
+.list-card > .alert {
+  margin: 16px;
+}
+
+@media (max-width: 575.98px) {
+  .list-card-toolbar .input-group {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .list-card-toolbar .form-select {
+    flex: 1 1 0;
+    width: auto !important;
+    min-width: 0;
+  }
+}

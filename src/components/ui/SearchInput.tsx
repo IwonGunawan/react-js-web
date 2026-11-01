@@ -31,7 +31,7 @@ export default function SearchInput({
   };
 
   return (
-    <div className="input-group input-group-sm" style={{ maxWidth: 300 }}>
+    <div className="input-group input-group-sm cs-search">
       <span className="input-group-text bg-white">
         <i className="bi bi-search text-muted" aria-hidden="true" />
       </span>

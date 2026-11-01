@@ -3,6 +3,8 @@ import { useCustomer } from "../../hooks/useCustomer";
 import { useVillage } from "../../hooks/useVillage";
 import { useAuthStore } from "../../stores/auth.store";
 import type { Customer } from "../../types";
+import Badge from "../../components/ui/Badge";
+import Button from "../../components/ui/Button";
 import SearchInput from "../../components/ui/SearchInput";
 import { TableSkeleton } from "../../components/ui/Skeleton";
 import EmptyState from "../../components/ui/EmptyState";
@@ -102,9 +104,8 @@ export default function CustomerPage() {
         ))}
       </ul>
 
-      {/* Filter Bar */}
-      <div className="stat-card mb-3">
-        <div className="d-flex flex-wrap gap-2 align-items-center">
+      <div className="list-card">
+        <div className="list-card-toolbar">
           <SearchInput
             placeholder="Cari nama atau code"
             onSearch={(v) => updateQuery({ search: v })}
@@ -128,43 +129,32 @@ export default function CustomerPage() {
               </option>
             ))}
           </select>
-          {/* <select className="form-select form-select-sm" style={{ width: 160 }}>
-            <option value="name-ASC">Nama A-Z</option>
-            <option value="name-DESC">Nama Z-A</option>
-            <option value="id-ASC">ID Terlama</option>
-            <option value="id-DESC">ID Terbaru</option>
-          </select> */}
         </div>
-      </div>
 
-      {/* Table  */}
-      <div className="stat-card">
         {isLoading ? (
           <TableSkeleton rows={8} cols={isAdmin ? 5 : 4} />
         ) : error ? (
-          <div className="alert alert-danger mb-0">{error}</div>
+          <div className="alert alert-danger">{error}</div>
         ) : customers.length == 0 ? (
           <EmptyState message="Pelanggan tidak ditemukan" />
         ) : (
           <>
             <div className="table-responsive">
-              <table className="table table-hover align-midle mb-0">
+              <table className="table table-hover align-middle mb-0">
                 <thead>
                   <tr>
                     <th>Kode</th>
                     <th>Prefix</th>
                     <th>Nama</th>
                     <th>Wilayah</th>
-                    {isAdmin && <th className="text-end">action</th>}
+                    {isAdmin && <th className="text-end">Aksi</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {customers.map((c) => (
                     <tr key={c.id}>
                       <td>
-                        <span className="badge bg-light text-dark fw-normal">
-                          {c.code}
-                        </span>
+                        <Badge>{c.code}</Badge>
                       </td>
                       <td>{c.prefix?.prefix}</td>
                       <td>
@@ -176,13 +166,14 @@ export default function CustomerPage() {
                         </span>
                       </td>
                       {isAdmin && (
-                        <td className="text-muted text-end">
-                          <button
-                            className="btn btn-sm btn-outline-secondary me-1"
+                        <td className="text-end">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            icon="bi-pencil"
+                            aria-label={`Edit ${c.name}`}
                             onClick={() => openEdit(c)}
-                          >
-                            <i className="bi bi-pencil" />
-                          </button>
+                          />
                         </td>
                       )}
                     </tr>
@@ -191,8 +182,7 @@ export default function CustomerPage() {
               </table>
             </div>
 
-            {/* Pagination */}
-            <div className="d-flex justify-content-end mt-3">
+            <div className="list-card-footer">
               <Pagination
                 page={query.page ?? 1}
                 totalPages={totalPages}

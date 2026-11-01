@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useWaterUsage } from "../../hooks/useWaterUsage";
+import Badge from "../../components/ui/Badge";
+import Button from "../../components/ui/Button";
 import EmptyState from "../../components/ui/EmptyState";
 import PageHeader from "../../components/ui/PageHeader";
 import Pagination from "../../components/ui/Pagination";
 import SearchInput from "../../components/ui/SearchInput";
+import { TableSkeleton } from "../../components/ui/Skeleton";
 import { useVillage } from "../../hooks/useVillage";
 import type { WaterUsageCustomer } from "../../services/water-usage.service";
-import { Spinner } from "../../components/ui/Spinner";
 import InputMeterModal from "./InputMeterModal";
 import WaterUsageHistoryModal from "./WaterUsageHistory";
 
@@ -65,9 +67,18 @@ export default function WaterUsagePage() {
         }
       />
 
-      {/* Filter */}
-      <div className="stat-card mb-3">
-        <div className="d-flex flex-wrap gap-2 align-items-center">
+      {/* Summary */}
+      <div className="d-flex flex-wrap gap-2 mb-3">
+        <Badge tone="success" dot>
+          {checkedCount} sudah dicek
+        </Badge>
+        <Badge tone="warning" dot>
+          {uncheckedCount} belum dicek
+        </Badge>
+      </div>
+
+      <div className="list-card">
+        <div className="list-card-toolbar">
           <SearchInput
             placeholder="Cari nama atau kode..."
             onSearch={(v) => updateQuery({ search: v })}
@@ -109,26 +120,11 @@ export default function WaterUsagePage() {
             <option value="id-DESC">ID Terbaru</option>
           </select>
         </div>
-      </div>
 
-      {/* Summary badges */}
-      <div className="d-flex gap-2 mb-3">
-        <span className="badge badge-status-lunas">
-          <i className="bi bi-check-circle me-1" />
-          {checkedCount} sudah dicek
-        </span>
-        <span className="badge badge-status-belum">
-          <i className="bi bi-clock me-1" />
-          {uncheckedCount} belum dicek
-        </span>
-      </div>
-
-      {/* List */}
-      <div className="stat-card">
         {isLoading ? (
-          <Spinner />
+          <TableSkeleton rows={8} cols={4} />
         ) : error ? (
-          <div className="alert alert-danger mb-0">{error}</div>
+          <div className="alert alert-danger">{error}</div>
         ) : data.length === 0 ? (
           <EmptyState message="Tidak ada pelanggan ditemukan" />
         ) : (
@@ -150,40 +146,38 @@ export default function WaterUsagePage() {
                         <p className="mb-0 fw-semibold small">{c.name}</p>
                       </td>
                       <td>
-                        <span className="badge bg-light text-dark fw-normal">
-                          {c.code}
-                        </span>
+                        <Badge>{c.code}</Badge>
                       </td>
                       <td>
                         {c.isChecked === 1 ? (
-                          <span className="badge badge-status-lunas">
-                            <i className="bi bi-droplet me-1" />
+                          <Badge tone="success" dot>
                             Sudah dicek
-                          </span>
+                          </Badge>
                         ) : (
-                          <span className="badge badge-status-belum">
-                            <i className="bi bi-clock me-1" />
+                          <Badge tone="warning" dot>
                             Belum dicek
-                          </span>
+                          </Badge>
                         )}
                       </td>
                       <td className="text-end">
                         {c.isChecked === 0 && (
-                          <button
-                            className="btn btn-sm btn-primary me-1"
+                          <Button
+                            size="sm"
+                            icon="bi-pencil-square"
+                            className="me-1"
                             onClick={() => setInputModal(c)}
                           >
-                            <i className="bi bi-pencil-square me-1" />
                             Input
-                          </button>
+                          </Button>
                         )}
-                        <button
-                          className="btn btn-sm btn-outline-secondary me-1"
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          icon="bi-clock-history"
                           title="History pemakaian"
+                          aria-label={`History pemakaian ${c.name}`}
                           onClick={() => setHistoryModal(c)}
-                        >
-                          <i className="bi bi-clock-history" />
-                        </button>
+                        />
                       </td>
                     </tr>
                   ))}
@@ -191,7 +185,7 @@ export default function WaterUsagePage() {
               </table>
             </div>
 
-            <div className="d-flex justify-content-end mt-3">
+            <div className="list-card-footer">
               <Pagination
                 page={query.page ?? 1}
                 totalPages={totalPages}
