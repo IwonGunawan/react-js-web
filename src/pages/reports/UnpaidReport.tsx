@@ -3,11 +3,13 @@ import {
   reportService,
   type UnpaidReportItem,
 } from "../../services/report.service";
+import Badge from "../../components/ui/Badge";
+import Card from "../../components/ui/Card";
 import EmptyState from "../../components/ui/EmptyState";
 import Pagination from "../../components/ui/Pagination";
 import SearchInput from "../../components/ui/SearchInput";
+import { TableSkeleton } from "../../components/ui/Skeleton";
 import { useVillage } from "../../hooks/useVillage";
-import { Spinner } from "../../components/ui/Spinner";
 
 const MONTH_NAMES = [
   "",
@@ -77,48 +79,46 @@ export default function UnpaidReport({ month, year }: Props) {
       {/* Summary */}
       <div className="row g-3 mb-3">
         <div className="col-md-6">
-          <div className="stat-card">
+          <Card>
             <p className="text-muted small mb-1">Belum Bayar</p>
             <h5 className="fw-bold mb-0">{total} pelanggan</h5>
-          </div>
+          </Card>
         </div>
         <div className="col-md-6">
-          <div className="stat-card">
+          <Card>
             <p className="text-muted small mb-1">Total Tunggakan</p>
             <h5 className="fw-bold mb-0 text-danger">
               {formatRupiah(totalArrears)}
             </h5>
-          </div>
+          </Card>
         </div>
       </div>
 
-      {/* Filter */}
-      <div className="d-flex flex-wrap gap-2 mb-3">
-        <SearchInput
-          placeholder="Cari nama atau kode..."
-          onSearch={setSearch}
-        />
-        <select
-          className="form-select form-select-sm"
-          style={{ width: 160 }}
-          value={villageId ?? ""}
-          onChange={(e) =>
-            setVillageId(e.target.value ? Number(e.target.value) : undefined)
-          }
-        >
-          <option value="">Semua Wilayah</option>
-          {villages.map((v) => (
-            <option key={v.id} value={v.id}>
-              {v.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      <div className="list-card">
+        <div className="list-card-toolbar">
+          <SearchInput
+            placeholder="Cari nama atau kode..."
+            onSearch={setSearch}
+          />
+          <select
+            className="form-select form-select-sm"
+            style={{ width: 160 }}
+            value={villageId ?? ""}
+            onChange={(e) =>
+              setVillageId(e.target.value ? Number(e.target.value) : undefined)
+            }
+          >
+            <option value="">Semua Wilayah</option>
+            {villages.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      {/* Table */}
-      <div className="stat-card">
         {isLoading ? (
-          <Spinner />
+          <TableSkeleton rows={8} cols={6} />
         ) : data.length === 0 ? (
           <EmptyState
             message="Semua pelanggan sudah bayar 🎉"
@@ -145,12 +145,7 @@ export default function UnpaidReport({ month, year }: Props) {
                         <p className="mb-0 small fw-semibold">
                           {row.prefix} {row.customerName}
                         </p>
-                        <span
-                          className="badge bg-light text-dark fw-normal"
-                          style={{ fontSize: "0.7rem" }}
-                        >
-                          {row.customerCode}
-                        </span>
+                        <Badge>{row.customerCode}</Badge>
                       </td>
                       <td>
                         <span className="small text-muted">{row.village}</span>
@@ -167,22 +162,19 @@ export default function UnpaidReport({ month, year }: Props) {
                           : "-"}
                       </td>
                       <td>
-                        <span
-                          className={`badge ${
-                            row.status === "0"
-                              ? "badge-status-belum"
-                              : "badge-status-kurang"
-                          }`}
+                        <Badge
+                          tone={row.status === "0" ? "warning" : "danger"}
+                          dot
                         >
                           {row.status === "0" ? "Belum Bayar" : "Kurang Bayar"}
-                        </span>
+                        </Badge>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <div className="d-flex justify-content-end mt-3">
+            <div className="list-card-footer">
               <Pagination
                 page={page}
                 totalPages={totalPages}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Card from "../../components/ui/Card";
 import PageHeader from "../../components/ui/PageHeader";
 import MonthlyReport from "./MonthlyReport";
 import UnpaidReport from "./UnpaidReport";
@@ -37,7 +38,7 @@ export default function ReportsPage() {
       />
 
       {/* Filter periode — shared untuk semua tab */}
-      <div className="stat-card mb-3">
+      <Card className="mb-3">
         <div className="d-flex flex-wrap gap-2 align-items-center">
           <span className="small text-muted fw-semibold me-1">Periode:</span>
           <select
@@ -65,7 +66,7 @@ export default function ReportsPage() {
             ))}
           </select>
         </div>
-      </div>
+      </Card>
 
       {/* Tabs */}
       <ul className="nav nav-tabs mb-3">
