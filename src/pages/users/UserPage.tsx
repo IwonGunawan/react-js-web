@@ -11,6 +11,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState<AppUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [modal, setModal] = useState<AppUser | "create" | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -38,6 +39,14 @@ export default function UsersPage() {
     };
   }, []);
 
+  const handleResetPassword = async (user: AppUser) => {
+    if (!confirm(`Reset password akun ${user.name} ke password default?`)) {
+      return;
+    }
+    const res = await userService.resetPassword(user.id);
+    setNotice(`Password ${user.name} direset ke "${res.defaultPassword}".`);
+  };
+
   const handleToggleStatus = async (user: AppUser) => {
     const action = user.status === "0" ? "nonaktifkan" : "aktifkan";
     if (!confirm(`${action} akun ${user.name}?`)) return;
@@ -60,6 +69,22 @@ export default function UsersPage() {
           </Button>
         }
       />
+
+      {notice && (
+        <div
+          className="alert alert-success d-flex align-items-center justify-content-between gap-2"
+          role="status"
+        >
+          <span className="small">{notice}</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            icon="bi-x"
+            aria-label="Tutup pesan"
+            onClick={() => setNotice(null)}
+          />
+        </div>
+      )}
 
       <div className="list-card">
         {isLoading ? (
@@ -126,6 +151,14 @@ export default function UsersPage() {
                         aria-label={`Edit ${u.name}`}
                         className="me-1"
                         onClick={() => setModal(u)}
+                      />
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        icon="bi-key"
+                        aria-label={`Reset password ${u.name}`}
+                        className="me-1"
+                        onClick={() => handleResetPassword(u)}
                       />
                       <Button
                         variant={u.status === "0" ? "danger" : "secondary"}
