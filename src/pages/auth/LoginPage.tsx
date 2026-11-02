@@ -3,6 +3,9 @@ import { authService } from "../../services/auth.service";
 import { useAuthStore } from "../../stores/auth.store";
 import { useNavigate } from "react-router-dom";
 import { getApiErrorMessage } from "../../utils";
+import Button from "../../components/ui/Button";
+import Field from "../../components/ui/Field";
+import Input from "../../components/ui/Input";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -107,18 +110,14 @@ export default function LoginPage() {
             </div>
           )}
 
-          <div className="mb-3">
-            <label className="form-label" htmlFor="login-username">
-              Username
-            </label>
+          <Field label="Username" htmlFor="login-username" className="mb-3">
             <div className="input-group">
               <span className="input-group-text">
                 <i className="bi bi-person" aria-hidden="true" />
               </span>
-              <input
+              <Input
                 id="login-username"
                 type="text"
-                className="form-control"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -131,20 +130,16 @@ export default function LoginPage() {
                 required
               />
             </div>
-          </div>
+          </Field>
 
-          <div className="mb-3">
-            <label className="form-label" htmlFor="login-password">
-              Password
-            </label>
+          <Field label="Password" htmlFor="login-password" className="mb-3">
             <div className="input-group">
               <span className="input-group-text">
                 <i className="bi bi-lock" aria-hidden="true" />
               </span>
-              <input
+              <Input
                 id="login-password"
                 type={showPassword ? "text" : "password"}
-                className="form-control"
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -155,23 +150,16 @@ export default function LoginPage() {
                 disabled={isLoading}
                 required
               />
-              <button
-                type="button"
-                className="btn btn-outline-secondary"
+              <Button
+                variant="secondary"
+                icon={showPassword ? "bi-eye-slash" : "bi-eye"}
                 aria-label={
                   showPassword ? "Sembunyikan password" : "Tampilkan password"
                 }
                 onClick={() => setShowPassword((value) => !value)}
-              >
-                <i
-                  className={`bi ${
-                    showPassword ? "bi-eye-slash" : "bi-eye"
-                  }`}
-                  aria-hidden="true"
-                />
-              </button>
+              />
             </div>
-          </div>
+          </Field>
 
           <div className="form-check my-3">
             <input
@@ -189,23 +177,14 @@ export default function LoginPage() {
             </label>
           </div>
 
-          <button
+          <Button
             type="submit"
-            className="btn btn-primary w-100"
-            disabled={isLoading}
+            block
+            loading={isLoading}
+            icon="bi-arrow-right"
           >
-            {isLoading ? (
-              <>
-                <span className="spinner-border spinner-border-sm" />
-                Masuk...
-              </>
-            ) : (
-              <>
-                Masuk
-                <i className="bi bi-arrow-right" aria-hidden="true" />
-              </>
-            )}
-          </button>
+            {isLoading ? "Masuk..." : "Masuk"}
+          </Button>
 
           <p className="login-foot">
             Butuh bantuan? Hubungi kantor pengelola air setempat.

@@ -102,9 +102,9 @@ export default function ReportsPage() {
 
       {/* Tab Content */}
       {activeTab === "monthly" ? (
-        <MonthlyReport month={month} year={year} />
+        <MonthlyReport key={`${month}-${year}`} month={month} year={year} />
       ) : (
-        <UnpaidReport month={month} year={year} />
+        <UnpaidReport key={`${month}-${year}`} month={month} year={year} />
       )}
     </div>
   );

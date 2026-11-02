@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Button from "../../components/ui/Button";
 import Field from "../../components/ui/Field";
+import Input from "../../components/ui/Input";
 import Modal from "../../components/ui/Modal";
 import type { Customer, Village } from "../../types";
 import { customerService } from "../../services/customer.service";
@@ -150,10 +151,9 @@ export default function CustomerFormModal({
 
           <div className="col-12">
             <Field label="Nama Lengkap" htmlFor="customer-name" required>
-              <input
+              <Input
                 id="customer-name"
                 name="name"
-                className="form-control"
                 value={form.name}
                 onChange={handleChange}
                 required

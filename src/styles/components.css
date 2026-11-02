@@ -36,14 +36,6 @@
 
 /* ── Cards & surfaces ──────────────────────────────────── */
 
-.stat-card {
-  padding: 20px;
-  background: var(--cs-card);
-  border: 1px solid var(--cs-border);
-  border-radius: var(--cs-radius);
-  box-shadow: var(--cs-shadow-card);
-}
-
 .stat-icon {
   display: grid;
   flex: none;
@@ -280,42 +272,6 @@
   color: #b9c8d0;
 }
 
-/* ── Badges ────────────────────────────────────────────── */
-
-.badge-status-lunas,
-.badge-status-belum,
-.badge-status-kurang,
-.badge-status-lebih {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 23px;
-  padding: 0 9px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 600;
-}
-
-.badge-status-lunas {
-  background: var(--cs-success-soft);
-  color: var(--cs-success-ink);
-}
-
-.badge-status-belum {
-  background: var(--cs-warning-soft);
-  color: var(--cs-warning-ink);
-}
-
-.badge-status-kurang {
-  background: var(--cs-danger-soft);
-  color: var(--cs-danger-ink);
-}
-
-.badge-status-lebih {
-  background: var(--cs-info-soft);
-  color: var(--cs-info);
-}
-
 /* ── Modals ────────────────────────────────────────────── */
 
 .modal-content {
@@ -414,14 +370,6 @@
 
   .income-chart-value {
     display: none;
-  }
-
-  .stat-card {
-    padding: 16px;
-  }
-
-  .stat-card h5 {
-    font-size: 1rem;
   }
 }
 

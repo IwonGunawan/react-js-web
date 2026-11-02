@@ -26,37 +26,53 @@ export default function MonthlyReport({ month, year }: Props) {
     totalIncome: 0,
     totalTransactions: 0,
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
   const [villageId, setVillageId] = useState<number | undefined>();
 
-  // Reset ke page 1 saat filter berubah
   useEffect(() => {
-    setPage(1);
-  }, [month, year, search, villageId]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      setIsLoading(true);
-      try {
-        const res = await reportService.getMonthly({
-          month,
-          year,
-          page,
-          search: search || undefined,
-          villageId,
-        });
+    let cancelled = false;
+    reportService
+      .getMonthly({
+        month,
+        year,
+        page,
+        search: search || undefined,
+        villageId,
+      })
+      .then((res) => {
+        if (cancelled) return;
         setData(res.data);
         setTotalPages(res.meta.totalPages);
         if (res.summary) setSummary(res.summary);
-      } finally {
-        setIsLoading(false);
-      }
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
     };
-    fetch();
   }, [month, year, page, search, villageId]);
+
+  const applySearch = (value: string) => {
+    setIsLoading(true);
+    setPage(1);
+    setSearch(value);
+  };
+
+  const applyVillage = (value: number | undefined) => {
+    setIsLoading(true);
+    setPage(1);
+    setVillageId(value);
+  };
+
+  const applyPage = (value: number) => {
+    setIsLoading(true);
+    setPage(value);
+  };
 
   return (
     <div>
@@ -82,14 +98,14 @@ export default function MonthlyReport({ month, year }: Props) {
         <div className="list-card-toolbar">
           <SearchInput
             placeholder="Cari nama atau kode..."
-            onSearch={setSearch}
+            onSearch={applySearch}
           />
           <select
             className="form-select form-select-sm"
             style={{ width: 160 }}
             value={villageId ?? ""}
             onChange={(e) =>
-              setVillageId(e.target.value ? Number(e.target.value) : undefined)
+              applyVillage(e.target.value ? Number(e.target.value) : undefined)
             }
           >
             <option value="">Semua Wilayah</option>
@@ -167,7 +183,7 @@ export default function MonthlyReport({ month, year }: Props) {
               <Pagination
                 page={page}
                 totalPages={totalPages}
-                onChange={setPage}
+                onChange={applyPage}
               />
             </div>
           </>

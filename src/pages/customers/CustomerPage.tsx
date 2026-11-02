@@ -74,9 +74,9 @@ export default function CustomerPage() {
         }`}
         actions={
           isAdmin && activeTab === "0" ? (
-            <button className="btn btn-primary btn-sm" onClick={openCreate}>
-              <i className="bi bi-plus-lg" aria-hidden="true" /> Tambah
-            </button>
+            <Button size="sm" icon="bi-plus-lg" onClick={openCreate}>
+              Tambah
+            </Button>
           ) : undefined
         }
       />

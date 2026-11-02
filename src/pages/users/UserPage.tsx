@@ -23,7 +23,19 @@ export default function UsersPage() {
   };
 
   useEffect(() => {
-    fetchUsers();
+    let cancelled = false;
+    userService
+      .getAll()
+      .then((data) => {
+        if (!cancelled) setUsers(data);
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleToggleStatus = async (user: AppUser) => {
@@ -39,13 +51,13 @@ export default function UsersPage() {
         title="Manajemen Petugas"
         description={`${users.length} akun terdaftar`}
         actions={
-          <button
-            className="btn btn-primary btn-sm"
+          <Button
+            size="sm"
+            icon="bi-plus-lg"
             onClick={() => setModal("create")}
           >
-            <i className="bi bi-plus-lg" aria-hidden="true" />
             Tambah Petugas
-          </button>
+          </Button>
         }
       />
 

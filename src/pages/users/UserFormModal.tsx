@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "../../components/ui/Button";
 import Field from "../../components/ui/Field";
+import Input from "../../components/ui/Input";
 import Modal from "../../components/ui/Modal";
 import { userService, type AppUser } from "../../services/user.service";
 
@@ -98,10 +99,9 @@ export default function UserFormModal({ user, onSaved, onClose }: Props) {
         )}
 
         <Field label="Nama" htmlFor="user-name" required className="mb-3">
-          <input
+          <Input
             id="user-name"
             name="name"
-            className="form-control"
             value={form.name}
             onChange={handleChange}
             required
@@ -109,11 +109,10 @@ export default function UserFormModal({ user, onSaved, onClose }: Props) {
         </Field>
 
         <Field label="Email" htmlFor="user-email" required className="mb-3">
-          <input
+          <Input
             id="user-email"
             name="email"
             type="email"
-            className="form-control"
             value={form.email}
             onChange={handleChange}
             required
@@ -128,11 +127,10 @@ export default function UserFormModal({ user, onSaved, onClose }: Props) {
             required
             className="mb-3"
           >
-            <input
+            <Input
               id="user-password"
               name="password"
               type="password"
-              className="form-control"
               value={form.password}
               onChange={handleChange}
               minLength={6}

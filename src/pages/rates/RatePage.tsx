@@ -4,8 +4,11 @@ import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import EmptyState from "../../components/ui/EmptyState";
+import Field from "../../components/ui/Field";
+import Input from "../../components/ui/Input";
 import PageHeader from "../../components/ui/PageHeader";
 import { TableSkeleton } from "../../components/ui/Skeleton";
+import { getApiErrorMessage } from "../../utils";
 
 const formatRupiah = (n: number) => "Rp " + n.toLocaleString("id-ID");
 
@@ -34,7 +37,20 @@ export default function RatesPage() {
   };
 
   useEffect(() => {
-    fetchRates();
+    let cancelled = false;
+    Promise.all([rateService.getAll(), rateService.getCurrent()])
+      .then(([all, cur]) => {
+        if (cancelled) return;
+        setRates(all);
+        setCurrent(cur);
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,8 +65,8 @@ export default function RatesPage() {
       setShowForm(false);
       setPrice("");
       fetchRates();
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? "Gagal menyimpan tarif");
+    } catch (err) {
+      setError(getApiErrorMessage(err, "Gagal menyimpan tarif"));
     } finally {
       setIsSaving(false);
     }
@@ -124,30 +140,34 @@ export default function RatesPage() {
           <form onSubmit={handleSubmit}>
             <div className="row g-3">
               <div className="col-md-5">
-                <label className="form-label small fw-semibold">
-                  Harga per m³ (Rp)
-                </label>
-                <input
-                  type="number"
-                  className="form-control form-control-sm"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  placeholder="1000"
-                  min={1}
-                  required
-                />
+                <Field label="Harga per m³ (Rp)" htmlFor="rate-price" required>
+                  <Input
+                    id="rate-price"
+                    type="number"
+                    className="form-control-sm"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="1000"
+                    min={1}
+                    required
+                  />
+                </Field>
               </div>
               <div className="col-md-5">
-                <label className="form-label small fw-semibold">
-                  Berlaku Mulai
-                </label>
-                <input
-                  type="date"
-                  className="form-control form-control-sm"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                <Field
+                  label="Berlaku Mulai"
+                  htmlFor="rate-effective-from"
                   required
-                />
+                >
+                  <Input
+                    id="rate-effective-from"
+                    type="date"
+                    className="form-control-sm"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    required
+                  />
+                </Field>
               </div>
               <div className="col-md-2 d-flex align-items-end gap-2">
                 <Button

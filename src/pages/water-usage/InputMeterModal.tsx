@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "../../components/ui/Button";
 import Field from "../../components/ui/Field";
+import Input from "../../components/ui/Input";
 import Modal from "../../components/ui/Modal";
 import {
   waterUsageService,
@@ -81,10 +82,10 @@ export default function InputMeterModal({ customer, onSaved, onClose }: Props) {
           htmlFor="meter-number"
           hint="Isi dengan angka yang tertera di meteran air."
         >
-          <input
+          <Input
             id="meter-number"
             type="number"
-            className="form-control form-control-lg text-center fw-bold"
+            className="form-control-lg text-center fw-bold"
             value={meterNumber}
             onChange={(e) => setMeterNumber(e.target.value)}
             placeholder="0"
