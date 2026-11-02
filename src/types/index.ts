@@ -43,31 +43,6 @@ export interface WaterUsage {
   lastUsed:    '0' | '1'; // 0;default, 1:terakhir dipakai
 }
 
-export interface Payment {
-  id:         number;
-  customerId: number;
-  total:      number;
-  cash:       number;
-  logUuid:    string;
-  createdAt:  string;
-}
-
-export interface BillDetail {
-  customerId:        number;
-  listBill:          ListBill[];
-  underpayment:      number;
-  overpayment:       number;
-  billTotal:         number;
-  finalTotal:        number;
-}
-
-export interface ListBill { 
-  waterUsageId:     number; 
-  month:            number; 
-  year:             number; 
-  meterUsage:       number 
-}
-
 export interface PaginatedResponse<T> {
   data: T[];
   meta: {

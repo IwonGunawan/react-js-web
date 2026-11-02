@@ -29,4 +29,11 @@ export const userService = {
 
   toggleStatus: (id: number) =>
     api.patch(`/users/${id}/status`).then(r => r.data),
+
+  resetPassword: (id: number) =>
+    api
+      .patch<{ id: number; message: string; defaultPassword: string }>(
+        `/users/${id}/reset-password`,
+      )
+      .then(r => r.data),
 };

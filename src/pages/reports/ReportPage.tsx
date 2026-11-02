@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Card from "../../components/ui/Card";
+import PageHeader from "../../components/ui/PageHeader";
 import MonthlyReport from "./MonthlyReport";
 import UnpaidReport from "./UnpaidReport";
 
@@ -30,16 +32,13 @@ export default function ReportsPage() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="mb-4">
-        <h5 className="fw-bold mb-0">Laporan</h5>
-        <p className="text-muted small mb-0">
-          Data rekap pembayaran dan tunggakan
-        </p>
-      </div>
+      <PageHeader
+        title="Laporan"
+        description="Data rekap pembayaran dan tunggakan"
+      />
 
       {/* Filter periode — shared untuk semua tab */}
-      <div className="stat-card mb-3">
+      <Card className="mb-3">
         <div className="d-flex flex-wrap gap-2 align-items-center">
           <span className="small text-muted fw-semibold me-1">Periode:</span>
           <select
@@ -67,7 +66,7 @@ export default function ReportsPage() {
             ))}
           </select>
         </div>
-      </div>
+      </Card>
 
       {/* Tabs */}
       <ul className="nav nav-tabs mb-3">
@@ -103,9 +102,9 @@ export default function ReportsPage() {
 
       {/* Tab Content */}
       {activeTab === "monthly" ? (
-        <MonthlyReport month={month} year={year} />
+        <MonthlyReport key={`${month}-${year}`} month={month} year={year} />
       ) : (
-        <UnpaidReport month={month} year={year} />
+        <UnpaidReport key={`${month}-${year}`} month={month} year={year} />
       )}
     </div>
   );

@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
 import { rateService, type Rate } from "../../services/rate.service";
+import Badge from "../../components/ui/Badge";
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
 import EmptyState from "../../components/ui/EmptyState";
-import { Spinner } from "../../components/ui/Spinner";
+import Field from "../../components/ui/Field";
+import Input from "../../components/ui/Input";
+import PageHeader from "../../components/ui/PageHeader";
+import { TableSkeleton } from "../../components/ui/Skeleton";
+import { getApiErrorMessage } from "../../utils";
 
 const formatRupiah = (n: number) => "Rp " + n.toLocaleString("id-ID");
 
@@ -30,7 +37,20 @@ export default function RatesPage() {
   };
 
   useEffect(() => {
-    fetchRates();
+    let cancelled = false;
+    Promise.all([rateService.getAll(), rateService.getCurrent()])
+      .then(([all, cur]) => {
+        if (cancelled) return;
+        setRates(all);
+        setCurrent(cur);
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,8 +65,8 @@ export default function RatesPage() {
       setShowForm(false);
       setPrice("");
       fetchRates();
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? "Gagal menyimpan tarif");
+    } catch (err) {
+      setError(getApiErrorMessage(err, "Gagal menyimpan tarif"));
     } finally {
       setIsSaving(false);
     }
@@ -54,24 +74,24 @@ export default function RatesPage() {
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h5 className="fw-bold mb-0">Manajemen Tarif</h5>
-          <p className="text-muted small mb-0">History perubahan tarif air</p>
-        </div>
-        <button
-          className="btn btn-primary btn-sm"
-          onClick={() => setShowForm(!showForm)}
-        >
-          <i className="bi bi-plus-lg me-1" />
-          Set Tarif Baru
-        </button>
-      </div>
+      <PageHeader
+        title="Manajemen Tarif"
+        description="Riwayat perubahan tarif air"
+        actions={
+          <Button
+            size="sm"
+            icon="bi-plus-lg"
+            onClick={() => setShowForm(!showForm)}
+          >
+            Set Tarif Baru
+          </Button>
+        }
+      />
 
       {/* Current rate highlight */}
       {current && (
         <div
-          className="stat-card mb-4 border-0"
+          className="cs-card cs-card-padded mb-4 border-0"
           style={{
             background:
               "linear-gradient(135deg, var(--cs-primary) 0%, var(--cs-primary-light) 100%)",
@@ -112,7 +132,7 @@ export default function RatesPage() {
 
       {/* Form set tarif baru */}
       {showForm && (
-        <div className="stat-card mb-4">
+        <Card className="mb-4">
           <p className="fw-semibold mb-3">Set Tarif Baru</p>
           {error && (
             <div className="alert alert-danger py-2 small">{error}</div>
@@ -120,61 +140,62 @@ export default function RatesPage() {
           <form onSubmit={handleSubmit}>
             <div className="row g-3">
               <div className="col-md-5">
-                <label className="form-label small fw-semibold">
-                  Harga per m³ (Rp)
-                </label>
-                <input
-                  type="number"
-                  className="form-control form-control-sm"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  placeholder="1000"
-                  min={1}
-                  required
-                />
+                <Field label="Harga per m³ (Rp)" htmlFor="rate-price" required>
+                  <Input
+                    id="rate-price"
+                    type="number"
+                    className="form-control-sm"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="1000"
+                    min={1}
+                    required
+                  />
+                </Field>
               </div>
               <div className="col-md-5">
-                <label className="form-label small fw-semibold">
-                  Berlaku Mulai
-                </label>
-                <input
-                  type="date"
-                  className="form-control form-control-sm"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                <Field
+                  label="Berlaku Mulai"
+                  htmlFor="rate-effective-from"
                   required
-                />
+                >
+                  <Input
+                    id="rate-effective-from"
+                    type="date"
+                    className="form-control-sm"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    required
+                  />
+                </Field>
               </div>
               <div className="col-md-2 d-flex align-items-end gap-2">
-                <button
+                <Button
                   type="submit"
-                  className="btn btn-primary btn-sm w-100"
-                  disabled={isSaving}
+                  size="sm"
+                  block
+                  loading={isSaving}
                 >
-                  {isSaving ? (
-                    <span className="spinner-border spinner-border-sm" />
-                  ) : (
-                    "Simpan"
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-light btn-sm"
+                  Simpan
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  icon="bi-x"
+                  aria-label="Tutup form"
                   onClick={() => setShowForm(false)}
-                >
-                  <i className="bi bi-x" />
-                </button>
+                />
               </div>
             </div>
           </form>
-        </div>
+        </Card>
       )}
 
       {/* History */}
-      <div className="stat-card">
-        <p className="fw-semibold mb-3">History Perubahan Tarif</p>
+      <div className="list-card">
+        <p className="list-card-title mb-3">History Perubahan Tarif</p>
         {isLoading ? (
-          <Spinner />
+          <TableSkeleton rows={4} cols={4} />
         ) : rates.length === 0 ? (
           <EmptyState message="Belum ada tarif tersimpan" icons="bi-tag" />
         ) : (
@@ -210,11 +231,11 @@ export default function RatesPage() {
                     </td>
                     <td>
                       {current?.id === r.id ? (
-                        <span className="badge badge-status-lunas">Aktif</span>
+                        <Badge tone="success" dot>
+                          Aktif
+                        </Badge>
                       ) : (
-                        <span className="badge bg-light text-muted">
-                          Tidak aktif
-                        </span>
+                        <Badge>Tidak aktif</Badge>
                       )}
                     </td>
                   </tr>

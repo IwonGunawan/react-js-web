@@ -3,10 +3,13 @@ import { useCustomer } from "../../hooks/useCustomer";
 import { useVillage } from "../../hooks/useVillage";
 import { useAuthStore } from "../../stores/auth.store";
 import type { Customer } from "../../types";
+import Badge from "../../components/ui/Badge";
+import Button from "../../components/ui/Button";
 import SearchInput from "../../components/ui/SearchInput";
-import { Spinner } from "../../components/ui/Spinner";
+import { TableSkeleton } from "../../components/ui/Skeleton";
 import EmptyState from "../../components/ui/EmptyState";
 import Pagination from "../../components/ui/Pagination";
+import PageHeader from "../../components/ui/PageHeader";
 import CustomerFormModal from "./CustomerFormModal";
 
 type StatusTab = "0" | "1";
@@ -64,20 +67,19 @@ export default function CustomerPage() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="d-flex justify-content-between align-item-center mb-4">
-        <div>
-          <h5 className="fw-bold mb-0">Pelanggan</h5>
-          <p className="text-muted small mb-0">
-            {totalData} {activeTab === "0" ? "Pelanggan Aktif" : "Pelanggan Non Aktif"}
-          </p>
-        </div>
-        {isAdmin && activeTab === "0" && (
-          <button className="btn btn-primary btn-sm pe-3" onClick={openCreate}>
-            <i className="bi bi-plus-lg me-1" /> Tambah
-          </button>
-        )}
-      </div>
+      <PageHeader
+        title="Pelanggan"
+        description={`${totalData} ${
+          activeTab === "0" ? "Pelanggan Aktif" : "Pelanggan Non Aktif"
+        }`}
+        actions={
+          isAdmin && activeTab === "0" ? (
+            <Button size="sm" icon="bi-plus-lg" onClick={openCreate}>
+              Tambah
+            </Button>
+          ) : undefined
+        }
+      />
 
       {/* Tabs */}
       <ul className="nav nav-tabs mb-3">
@@ -102,9 +104,8 @@ export default function CustomerPage() {
         ))}
       </ul>
 
-      {/* Filter Bar */}
-      <div className="stat-card mb-3">
-        <div className="d-flex flex-wrap gap-2 align-items-center">
+      <div className="list-card">
+        <div className="list-card-toolbar">
           <SearchInput
             placeholder="Cari nama atau code"
             onSearch={(v) => updateQuery({ search: v })}
@@ -118,7 +119,6 @@ export default function CustomerPage() {
               const villageId = e.target.value
                 ? Number(e.target.value)
                 : undefined;
-              console.log({ villageId });
               updateQuery({ village_id: villageId });
             }}
           >
@@ -129,43 +129,32 @@ export default function CustomerPage() {
               </option>
             ))}
           </select>
-          {/* <select className="form-select form-select-sm" style={{ width: 160 }}>
-            <option value="name-ASC">Nama A-Z</option>
-            <option value="name-DESC">Nama Z-A</option>
-            <option value="id-ASC">ID Terlama</option>
-            <option value="id-DESC">ID Terbaru</option>
-          </select> */}
         </div>
-      </div>
 
-      {/* Table  */}
-      <div className="stat-card">
         {isLoading ? (
-          <Spinner />
+          <TableSkeleton rows={8} cols={isAdmin ? 5 : 4} />
         ) : error ? (
-          <div className="alert alert-danger mb-0">{error}</div>
+          <div className="alert alert-danger">{error}</div>
         ) : customers.length == 0 ? (
           <EmptyState message="Pelanggan tidak ditemukan" />
         ) : (
           <>
             <div className="table-responsive">
-              <table className="table table-hover align-midle mb-0">
+              <table className="table table-hover align-middle mb-0">
                 <thead>
                   <tr>
                     <th>Kode</th>
                     <th>Prefix</th>
                     <th>Nama</th>
                     <th>Wilayah</th>
-                    {isAdmin && <th className="text-end">action</th>}
+                    {isAdmin && <th className="text-end">Aksi</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {customers.map((c) => (
                     <tr key={c.id}>
                       <td>
-                        <span className="badge bg-light text-dark fw-normal">
-                          {c.code}
-                        </span>
+                        <Badge>{c.code}</Badge>
                       </td>
                       <td>{c.prefix?.prefix}</td>
                       <td>
@@ -177,13 +166,14 @@ export default function CustomerPage() {
                         </span>
                       </td>
                       {isAdmin && (
-                        <td className="text-muted text-end">
-                          <button
-                            className="btn btn-sm btn-outline-secondary me-1"
+                        <td className="text-end">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            icon="bi-pencil"
+                            aria-label={`Edit ${c.name}`}
                             onClick={() => openEdit(c)}
-                          >
-                            <i className="bi bi-pencil" />
-                          </button>
+                          />
                         </td>
                       )}
                     </tr>
@@ -192,8 +182,7 @@ export default function CustomerPage() {
               </table>
             </div>
 
-            {/* Pagination */}
-            <div className="d-flex justify-content-end mt-3">
+            <div className="list-card-footer">
               <Pagination
                 page={query.page ?? 1}
                 totalPages={totalPages}
@@ -207,6 +196,7 @@ export default function CustomerPage() {
       {/* Modal Customer */}
       {modalOpen && (
         <CustomerFormModal
+          key={selectedCustomer?.id ?? "new"}
           customer={selectedCustomer}
           villages={villages}
           onSaved={handleSaved}

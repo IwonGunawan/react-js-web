@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
 import { userService, type AppUser } from "../../services/user.service";
+import Badge from "../../components/ui/Badge";
+import Button from "../../components/ui/Button";
 import EmptyState from "../../components/ui/EmptyState";
+import PageHeader from "../../components/ui/PageHeader";
+import { TableSkeleton } from "../../components/ui/Skeleton";
 import UserFormModal from "./UserFormModal";
-import { Spinner } from "../../components/ui/Spinner";
 
 export default function UsersPage() {
   const [users, setUsers] = useState<AppUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [modal, setModal] = useState<AppUser | "create" | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -20,8 +24,28 @@ export default function UsersPage() {
   };
 
   useEffect(() => {
-    fetchUsers();
+    let cancelled = false;
+    userService
+      .getAll()
+      .then((data) => {
+        if (!cancelled) setUsers(data);
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  const handleResetPassword = async (user: AppUser) => {
+    if (!confirm(`Reset password akun ${user.name} ke password default?`)) {
+      return;
+    }
+    const res = await userService.resetPassword(user.id);
+    setNotice(`Password ${user.name} direset ke "${res.defaultPassword}".`);
+  };
 
   const handleToggleStatus = async (user: AppUser) => {
     const action = user.status === "0" ? "nonaktifkan" : "aktifkan";
@@ -32,23 +56,39 @@ export default function UsersPage() {
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h5 className="fw-bold mb-0">Manajemen Petugas</h5>
-          <p className="text-muted small mb-0">{users.length} akun terdaftar</p>
-        </div>
-        <button
-          className="btn btn-primary btn-sm"
-          onClick={() => setModal("create")}
-        >
-          <i className="bi bi-plus-lg me-1" />
-          Tambah Petugas
-        </button>
-      </div>
+      <PageHeader
+        title="Manajemen Petugas"
+        description={`${users.length} akun terdaftar`}
+        actions={
+          <Button
+            size="sm"
+            icon="bi-plus-lg"
+            onClick={() => setModal("create")}
+          >
+            Tambah Petugas
+          </Button>
+        }
+      />
 
-      <div className="stat-card">
+      {notice && (
+        <div
+          className="alert alert-success d-flex align-items-center justify-content-between gap-2"
+          role="status"
+        >
+          <span className="small">{notice}</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            icon="bi-x"
+            aria-label="Tutup pesan"
+            onClick={() => setNotice(null)}
+          />
+        </div>
+      )}
+
+      <div className="list-card">
         {isLoading ? (
-          <Spinner />
+          <TableSkeleton rows={6} cols={5} />
         ) : users.length === 0 ? (
           <EmptyState message="Belum ada petugas terdaftar" />
         ) : (
@@ -94,34 +134,39 @@ export default function UsersPage() {
                       <span className="small text-muted">{u.email}</span>
                     </td>
                     <td>
-                      <span
-                        className={`badge ${u.level === "0" ? "badge-status-lunas" : "badge-status-lebih"}`}
-                      >
+                      <Badge tone={u.level === "0" ? "info" : "neutral"}>
                         {u.level === "0" ? "Admin" : "Operator"}
-                      </span>
+                      </Badge>
                     </td>
                     <td>
-                      <span
-                        className={`badge ${u.status === "0" ? "badge-status-lunas" : "badge-status-kurang"}`}
-                      >
+                      <Badge tone={u.status === "0" ? "success" : "danger"} dot>
                         {u.status === "0" ? "Aktif" : "Nonaktif"}
-                      </span>
+                      </Badge>
                     </td>
                     <td className="text-end">
-                      <button
-                        className="btn btn-sm btn-outline-secondary me-1"
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        icon="bi-pencil"
+                        aria-label={`Edit ${u.name}`}
+                        className="me-1"
                         onClick={() => setModal(u)}
-                      >
-                        <i className="bi bi-pencil" />
-                      </button>
-                      <button
-                        className={`btn btn-sm ${u.status === "0" ? "btn-outline-danger" : "btn-outline-success"}`}
+                      />
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        icon="bi-key"
+                        aria-label={`Reset password ${u.name}`}
+                        className="me-1"
+                        onClick={() => handleResetPassword(u)}
+                      />
+                      <Button
+                        variant={u.status === "0" ? "danger" : "secondary"}
+                        size="sm"
+                        icon={u.status === "0" ? "bi-slash-circle" : "bi-check-circle"}
+                        aria-label={u.status === "0" ? `Nonaktifkan ${u.name}` : `Aktifkan ${u.name}`}
                         onClick={() => handleToggleStatus(u)}
-                      >
-                        <i
-                          className={`bi ${u.status === "0" ? "bi-slash-circle" : "bi-check-circle"}`}
-                        />
-                      </button>
+                      />
                     </td>
                   </tr>
                 ))}
@@ -133,6 +178,7 @@ export default function UsersPage() {
 
       {modal && (
         <UserFormModal
+          key={modal === "create" ? "new" : modal.id}
           user={modal === "create" ? null : modal}
           onSaved={() => {
             setModal(null);

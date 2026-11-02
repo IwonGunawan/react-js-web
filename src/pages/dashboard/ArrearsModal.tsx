@@ -1,3 +1,6 @@
+import Badge from "../../components/ui/Badge";
+import Button from "../../components/ui/Button";
+import Modal from "../../components/ui/Modal";
 import { formatRupiah } from "../../utils";
 
 export default function ArrearsModal({
@@ -15,114 +18,63 @@ export default function ArrearsModal({
   const total = data.reduce((s, a) => s + a.arrearsAmount, 0);
 
   return (
-    <div
-      className="modal show d-block"
-      style={{ background: "rgba(0,0,0,0.5)" }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+    <Modal
+      title="Top 10 Tunggakan Terbesar"
+      description={
+        <>
+          Total:{" "}
+          <span className="fw-semibold text-danger">{formatRupiah(total)}</span>
+        </>
+      }
+      onClose={onClose}
+      bodyClassName="is-flush"
+      footer={
+        <Button variant="ghost" size="sm" onClick={onClose}>
+          Tutup
+        </Button>
+      }
     >
-      <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div className="modal-content">
-          {/* Header */}
-          <div className="modal-header">
-            <div>
-              <h6 className="modal-title fw-bold mb-0">
-                Top 10 Tunggakan Terbesar
-              </h6>
-              <p className="text-muted small mb-0">
-                Total:{" "}
-                <span className="fw-semibold text-danger">
-                  {formatRupiah(total)}
-                </span>
-              </p>
-            </div>
-            <button className="btn-close" onClick={onClose} />
-          </div>
-
-          {/* Body */}
-          <div className="modal-body p-0">
-            <table className="table table-hover align-middle mb-0">
-              <thead className="table-light">
-                <tr>
-                  <th className="ps-3" style={{ width: 40 }}>
-                    #
-                  </th>
-                  <th>Pelanggan</th>
-                  <th className="text-end pe-3">Tunggakan</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((a, index) => (
-                  <tr key={a.customerId}>
-                    <td className="ps-3">
-                      <span
-                        className="d-flex align-items-center justify-content-center rounded-circle fw-bold mx-auto"
-                        style={{
-                          width: 26,
-                          height: 26,
-                          fontSize: "0.75rem",
-                          background:
-                            index === 0
-                              ? "var(--cs-danger-soft)"
-                              : index === 1
-                                ? "var(--cs-warning-soft)"
-                                : index === 2
-                                  ? "var(--cs-primary-soft)"
-                                  : "var(--cs-neutral-soft)",
-                          color:
-                            index === 0
-                              ? "var(--cs-danger)"
-                              : index === 1
-                                ? "var(--cs-warning)"
-                                : index === 2
-                                  ? "var(--cs-primary)"
-                                  : "var(--cs-text-secondary)",
-                        }}
-                      >
-                        {index + 1}
-                      </span>
-                    </td>
-                    <td>
-                      <p className="mb-0 small fw-semibold">{a.name}</p>
-                      <p
-                        className="mb-0 text-muted"
-                        style={{ fontSize: "0.75rem" }}
-                      >
-                        {a.code}
-                      </p>
-                    </td>
-                    <td className="text-end pe-3">
-                      <span className="badge badge-status-kurang">
-                        {formatRupiah(a.arrearsAmount)}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-
-              {/* Footer total */}
-              <tfoot className="table-light">
-                <tr>
-                  <td colSpan={2} className="ps-3 fw-semibold small">
-                    Total
-                  </td>
-                  <td className="text-end pe-3 fw-bold text-danger small">
-                    {formatRupiah(total)}
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-
-          {/* Footer */}
-          <div className="modal-footer">
-            <button className="btn btn-sm btn-light" onClick={onClose}>
-              Tutup
-            </button>
-          </div>
-        </div>
+      <div className="table-responsive">
+        <table className="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th style={{ width: 48 }}>#</th>
+              <th>Pelanggan</th>
+              <th className="text-end">Tunggakan</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((a, index) => (
+              <tr key={a.customerId}>
+                <td>
+                  <span className={`rank-circle ${index === 0 ? "top" : ""}`}>
+                    {index + 1}
+                  </span>
+                </td>
+                <td>
+                  <p className="mb-0 small fw-semibold">{a.name}</p>
+                  <p className="mb-0 text-muted" style={{ fontSize: "0.72rem" }}>
+                    {a.code}
+                  </p>
+                </td>
+                <td className="text-end">
+                  <Badge tone="danger">{formatRupiah(a.arrearsAmount)}</Badge>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan={2} className="fw-semibold small">
+                Total
+              </td>
+              <td className="text-end fw-bold text-danger small">
+                {formatRupiah(total)}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
-    </div>
+    </Modal>
   );
 }

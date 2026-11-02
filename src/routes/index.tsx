@@ -5,7 +5,6 @@ import DashboardPage from "../pages/dashboard/DashboardPage";
 import MainLayout from "../components/shared/MainLayout";
 import CustomerPage from "../pages/customers/CustomerPage";
 import WaterUsagePage from "../pages/water-usage/WaterUsagePage";
-import PaymentsPage from "../pages/payments/PaymentPage";
 import ReportsPage from "../pages/reports/ReportPage";
 import UsersPage from "../pages/users/UserPage";
 import RatesPage from "../pages/rates/RatePage";
@@ -29,10 +28,6 @@ export const router = createBrowserRouter([
           {
             path: "/water-usage",
             element: <WaterUsagePage />,
-          },
-          {
-            path: "/payments",
-            element: <PaymentsPage />,
           },
         ],
       },

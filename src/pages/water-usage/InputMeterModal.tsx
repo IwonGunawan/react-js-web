@@ -1,4 +1,8 @@
 import { useState } from "react";
+import Button from "../../components/ui/Button";
+import Field from "../../components/ui/Field";
+import Input from "../../components/ui/Input";
+import Modal from "../../components/ui/Modal";
 import {
   waterUsageService,
   type WaterUsageCustomer,
@@ -27,91 +31,70 @@ export default function InputMeterModal({ customer, onSaved, onClose }: Props) {
         meterNumber: Number(meterNumber),
       });
       onSaved();
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? "Gagal menyimpan data");
+    } catch (err) {
+      const message = (err as { response?: { data?: { message?: string } } })
+        .response?.data?.message;
+      setError(message ?? "Gagal menyimpan data");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div
-      className="modal show d-block"
-      style={{ background: "rgba(0,0,0,0.5)" }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+    <Modal
+      size="sm"
+      title="Input Kilometer"
+      description={`${customer.prefix} ${customer.name} — ${customer.code}`}
+      onClose={onClose}
+      closeDisabled={isLoading}
+      footer={
+        <>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            disabled={isLoading}
+          >
+            Batal
+          </Button>
+          <Button
+            type="submit"
+            form="meter-form"
+            size="sm"
+            icon="bi-check-lg"
+            loading={isLoading}
+            disabled={!meterNumber}
+          >
+            Simpan
+          </Button>
+        </>
+      }
     >
-      <div className="modal-dialog modal-dialog-centered modal-sm">
-        <div className="modal-content">
-          <div className="modal-header">
-            <div>
-              <h6 className="modal-title fw-bold mb-0">Input Kilometer</h6>
-              <p className="text-muted small mb-0">
-                {customer.prefix} {customer.name} — {customer.code}
-              </p>
-            </div>
-            <button
-              className="btn-close"
-              onClick={onClose}
-              disabled={isLoading}
-            />
+      <form id="meter-form" onSubmit={handleSubmit}>
+        {error && (
+          <div className="alert alert-danger mb-3" role="alert">
+            {error}
           </div>
+        )}
 
-          <form onSubmit={handleSubmit}>
-            <div className="modal-body">
-              {error && (
-                <div className="alert alert-danger py-2 small">{error}</div>
-              )}
-
-              <label className="form-label small fw-semibold">
-                Angka Meter Bulan Ini
-              </label>
-              <input
-                type="number"
-                className="form-control form-control-lg text-center"
-                value={meterNumber}
-                onChange={(e) => setMeterNumber(e.target.value)}
-                placeholder="0"
-                min={0}
-                autoFocus
-                required
-              />
-              <p className="text-muted small mt-1 mb-0">
-                Isi dengan angka yang tertera di meteran air
-              </p>
-            </div>
-
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-sm btn-light"
-                onClick={onClose}
-                disabled={isLoading}
-              >
-                Batal
-              </button>
-              <button
-                type="submit"
-                className="btn btn-sm btn-primary"
-                disabled={isLoading || !meterNumber}
-              >
-                {isLoading ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-1" />
-                    Menyimpan...
-                  </>
-                ) : (
-                  <>
-                    <i className="bi bi-check-lg me-1" />
-                    Simpan
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+        <Field
+          label="Angka Meter Bulan Ini"
+          htmlFor="meter-number"
+          hint="Isi dengan angka yang tertera di meteran air."
+        >
+          <Input
+            id="meter-number"
+            type="number"
+            className="form-control-lg text-center fw-bold"
+            value={meterNumber}
+            onChange={(e) => setMeterNumber(e.target.value)}
+            placeholder="0"
+            min={0}
+            autoFocus
+            required
+          />
+        </Field>
+      </form>
+    </Modal>
   );
 }
